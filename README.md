@@ -1,6 +1,10 @@
 # F3K TRAINING
 
 Actual version 3.03B with some implements of X7 Views.
+Original project on: https://www.rcgroups.com/forums/showthread.php?2298914-F3K-training-script-for-the-Taranis-Q-and-Horus/page22
+
+1. Manage some missing view task on X7 folder.
+2. Modify f3k.lua for select last task FF too.
 
 ## INSTALL ON OPENTX Radio
 1. Open SD card of your openTX Radio
