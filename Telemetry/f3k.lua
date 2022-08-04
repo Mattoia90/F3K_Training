@@ -59,6 +59,10 @@ F3KVersion = '3.03B'
 			Task M Each competitor must launch his/her model glider exactly three (3) times to achieve three (3) target times as follows: 3:00 (180 seconds), 5:00 (300 seconds), 7:00 (420 seconds). 
 				The targets must be flown in the increasing order as specified. The actual times of each flight up to (not exceeding) the target time will be added up and used as the final score for the task. 
 				The competitors do not have to reach or exceed the target times to count each flight time. Working time: 15 minutes.
+	3.03 (BETA2) - Mattoia90 - Changed only apply to Taranis X7.
+			Task M - Huge Ladder fix view.
+			Menu fix when start with throttle down and start switch on.
+			Add some comment on code
 --]]
 
 F3K_SCRIPT_PATH = "/SCRIPTS/F3K_TRAINING/"
@@ -76,12 +80,11 @@ createTimeKeeper = dofile( F3K_SCRIPT_PATH .. 'timekeeper.lua' )
 --Context = {
 	Options = { 
 		MenuSwitch = F3KConfig.MENU_SWITCH,
-		PrelaunchSwitch = F3KConfig.PRELAUNCH_SWITCH,
+		PrelaunchSwitch = F3KConfig.PRELAUNCH_SWITCH, --preset
 		MenuScrollEncoder = F3KConfig.MENU_SCROLL_ENCODER,
 		BackgroundColor = WHITE 
 	}
 --}
-
 
 
 local createMenu
@@ -112,6 +115,7 @@ end
 	UI to choose the task
 --]]
 createMenu = function()
+	--List of possibile task
 	local TASKS = {
 		{ id='A', desc='Last flight' },
 		{ id='B', desc='Last two' },
@@ -137,21 +141,23 @@ createMenu = function()
 	end
 
 	local function display()
-		local div = 2048 / (#TASKS)  -- we want [0..n-1] steps
+		--Draw the menu for select Task to use.
+		local div = 2048 / (#TASKS - 1)  -- we want [0..n-1] steps
 		local selection = math.floor( (getValue( Options.MenuScrollEncoder ) - 1024) / -div )
-
+		local halfMenuEntries = 3
 		for i=0,6 do
 			local att = 0
 			if i == 3 then
 				att = INVERS
 			end
-			local ii = i + selection - 2
+			local ii = i + selection - halfMenuEntries + 1
 			if ii >= 1 and ii <= #TASKS then
 				lcd.drawText( 10, 1 + 9 * i, TASKS[ ii ].id, att )
 				lcd.drawText( 25, 1 + 9 * i, TASKS[ ii ].desc, att )
 			end
 		end
 
+		--check the lcd width to determine the screen radio type.
 		local taskPath
 		if LCD_W > 128 then 
 			lcd.drawText( 175, 2, 'F3K', DBLSIZE )
@@ -159,14 +165,14 @@ createMenu = function()
 
 			lcd.drawText( 180, 54, 'v.', 0 )
 			lcd.drawText( lcd.getLastPos(), 54, F3KVersion, 0 )
-
 			taskPath = '/SCRIPTS/F3K_TRAINING/X9/view_'
 		else
 			taskPath = '/SCRIPTS/F3K_TRAINING/X7/view_'
 		end
+		--if the switch is set start the current task
 		if getValue( Options.MenuSwitch ) >= 0 then
-			currentTask = dofile( taskPath .. TASKS[ selection+1 ].id .. '.lua' )
-			local win = TASKS[ selection+1 ].win or 10
+			currentTask = dofile( taskPath .. TASKS[ selection + 1 ].id .. '.lua' )
+			local win = TASKS[ selection + 1 ].win or 10
 			init( win * 60 )
 		end
 
