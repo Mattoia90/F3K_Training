@@ -83,7 +83,7 @@ function taskQT.flyingState()
 			local t = taskQT.timer2.getVal()
 			if t ~= taskQT.previousTime then
 				if t > 0 and t <= 30 then
-					taskQT.playNumber( t, 0, 0 )
+					playNumber( t, 0, 0 )
 					taskQT.previousTime = t
 				end
 			end
