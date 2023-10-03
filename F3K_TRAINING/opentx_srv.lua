@@ -139,6 +139,19 @@ local function runningTwoPointTwo( widget )
 	end
 end
 
+local function runningTwoPointThree( widget )
+	openTX.backgroundRun = function( obj )
+		return obj.background()
+	end
+	openTX.MINUTES = UNIT_MINUTES
+	openTX.SECONDS = UNIT_SECONDS
+
+	if widget then
+		openTX.lcd = createWidgetLayer()
+	else
+		openTX.lcd = createLcdLayer()
+	end
+end
 
 
 
@@ -154,9 +167,13 @@ local ok, msg = pcall( function()
 --	print( 'F3K: Horus Detected' )
 end )
 
+if not ok then
+	print(msg)
+end
 
 ok, msg = pcall( function()
 	local ver = getVersion()
+	print("Read version "..ver)
 	if type( ver ) == 'string' then
 		local ver = string.sub( ver, 1, 3 )
 		if ver == '2.0' then
@@ -165,14 +182,18 @@ ok, msg = pcall( function()
 		elseif ver == '2.1' then
 			--print( 'F3K: OpenTX Version Detected = 2.1' )
 			runningTwoPointOne()
-		else
-			--print( 'F3K: OpenTX Version Detected = 2.2 assumed' )
+		elseif ver == '2.2' then
+			--print( 'F3K: OpenTX Version Detected = 2.2' )
 			runningTwoPointTwo( widget )
+		else
+			--print( 'F3K: OpenTX Version >= 2.3 assumed' )
+			runningTwoPointThree( widget )
 		end
 	end
 end )
 
 if not ok then
+	print(msg)
 	-- no string lib ?
 	print( 'F3K: OpenTX Version Detected = 2.0 assumed (no string lib)' )
 	runningTwoPointZero()
