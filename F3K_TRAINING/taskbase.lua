@@ -46,7 +46,7 @@ local taskBase = {
 function taskBase.playTime( time )
 	local val = math.floor( time / 60 )
 	if val > 0 then
-	    				taskBase.playSound( 'remaining' )
+		taskBase.playSound( 'remaining' )
 		playNumber( val, OpenTX.MINUTES, 0 )
 	end
 	val = time % 60
