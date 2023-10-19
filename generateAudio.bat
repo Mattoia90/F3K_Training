@@ -26,6 +26,6 @@ set OPTIONS=-n "Microsoft Zira Desktop"
 %AUDIO_GEN_TOOL% %OPTIONS% -t "task K, big ladder" -w %AUDIO_OUTPUT_DIR%/taskk.wav
 %AUDIO_GEN_TOOL% %OPTIONS% -t "task L, one flight only, 9:59 max" -w %AUDIO_OUTPUT_DIR%/taskl.wav
 %AUDIO_GEN_TOOL% %OPTIONS% -t "task M, huge ladder, target flights in order, 3, 5 and 7 minutes, 15 minutes working window" -w %AUDIO_OUTPUT_DIR%/taskm.wav
-%AUDIO_GEN_TOOL% %OPTIONS% -t "quick turnaround practice, 40 seconds flights" -w %AUDIO_OUTPUT_DIR%/taskqt.wav
+%AUDIO_GEN_TOOL% %OPTIONS% -t "quick turnaround practice, 45 seconds flights" -w %AUDIO_OUTPUT_DIR%/taskqt.wav
 %AUDIO_GEN_TOOL% %OPTIONS% -t "well done" -w %AUDIO_OUTPUT_DIR%/welldone.wav
 

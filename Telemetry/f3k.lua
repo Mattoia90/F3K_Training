@@ -132,7 +132,7 @@ createMenu = function()
 		{ id='A', desc='Last flight (7 min)', win=7 },
 		{ id='B', desc='Last two (7 min)', win=7 },
 		{ id='D2', desc='Small Ladder'},
-		{ id='QT', desc=LCD_W > 128 and 'QT practice (15 x 40s)' or 'QT practice' },
+		{ id='QT', desc=LCD_W > 128 and 'QT practice (13 x 45s)' or 'QT practice' },
 		{ id='FF', desc=LCD_W > 128 and 'Free flight (simple timer)' or 'Free flight' }
 	}
 
