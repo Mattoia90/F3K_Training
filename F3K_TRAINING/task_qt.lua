@@ -2,15 +2,15 @@
 	F3K Training - Mike, ON4MJ
 
 	task_qt.lua
-	Task QT : 15x40s (10 min window)
+	Task QT : 13x45s (10 min window)
 --]]
 
 
 local taskQT = dofile( F3K_SCRIPT_PATH .. 'taskbase.lua' )
 
 
-taskQT.MAX_FLIGHT_TIME = 40
-taskQT.FLIGHT_COUNT = 15
+taskQT.MAX_FLIGHT_TIME = 45
+taskQT.FLIGHT_COUNT = 13
 
 taskQT.deltas = {min = 0, max = 0, avg = 0}
 
@@ -82,7 +82,10 @@ function taskQT.flyingState()
 			-- Here we manage most of the counting ourselves
 			local t = taskQT.timer2.getVal()
 			if t ~= taskQT.previousTime then
-				if t > 0 and t <= 30 then
+				if(t == 30) then
+					playNumber( t, OpenTX.SECONDS, 0)
+					taskQT.previousTime = t
+				elseif t > 0 and t <= 15 then
 					playNumber( t, 0, 0 )
 					taskQT.previousTime = t
 				end
