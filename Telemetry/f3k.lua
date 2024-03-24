@@ -125,6 +125,7 @@ createMenu = function()
 		{ id='K', desc='Big Ladder' },
 		{ id='L', desc='One flight' },
 		{ id='M', desc='Huge ladder' },
+		{ id='N', desc='Best Flight' },
 		{ id='A', desc='Last flight (7 min)', win=7 },
 		{ id='B', desc='Last two (7 min)', win=7 },
 		{ id='D2', desc='Small Ladder'},
@@ -139,13 +140,13 @@ createMenu = function()
 	local function display()
 		local div = 2048 / (#TASKS)  -- we want [0..n-1] steps
 		local selection = math.floor( (getValue( Options.MenuScrollEncoder ) - 1024) / -div )
-
+		local halfMenuEntries = 3
 		for i=0,6 do
 			local att = 0
-			if i == 3 then
+			if i == halfMenuEntries then
 				att = INVERS
 			end
-			local ii = i + selection - 2
+			local ii = i + selection - halfMenuEntries + 1
 			if ii >= 1 and ii <= #TASKS then
 				lcd.drawText( 10, 1 + 9 * i, TASKS[ ii ].id, att )
 				lcd.drawText( 25, 1 + 9 * i, TASKS[ ii ].desc, att )
@@ -164,9 +165,12 @@ createMenu = function()
 		else
 			taskPath = '/SCRIPTS/F3K_TRAINING/X7/view_'
 		end
+
 		if getValue( Options.MenuSwitch ) >= 0 then
+			--if the menu switch was enable set the current path
 			currentTask = dofile( taskPath .. TASKS[ selection+1 ].id .. '.lua' )
-			local win = TASKS[ selection+1 ].win or 10
+			--select operating time from win or default 10 minutes.
+			local win = TASKS[ selection+1 ].win or 10 
 			init( win * 60 )
 		end
 
