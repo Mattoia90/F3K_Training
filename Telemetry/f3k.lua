@@ -130,6 +130,7 @@ createMenu = function()
 		{ id='L', desc='One flight' },
 		{ id='M', desc='Huge ladder' },
 		{ id='N', desc='Best Flight' },
+		{ id='N', desc='Best Flight' },
 		{ id='A', desc='Last flight (7 min)', win=7 },
 		{ id='B', desc='Last two (7 min)', win=7 },
 		{ id='D2', desc='Small Ladder'},
@@ -146,11 +147,14 @@ createMenu = function()
 		local div = 2048 / (#TASKS - 1)  -- we want [0..n-1] steps
 		local selection = math.floor( (getValue( Options.MenuScrollEncoder ) - 1024) / -div )
 		local halfMenuEntries = 3
+		local halfMenuEntries = 3
 		for i=0,6 do
 			local att = 0
 			if i == halfMenuEntries then
+			if i == halfMenuEntries then
 				att = INVERS
 			end
+			local ii = i + selection - halfMenuEntries + 1
 			local ii = i + selection - halfMenuEntries + 1
 			if ii >= 1 and ii <= #TASKS then
 				lcd.drawText( 10, 1 + 9 * i, TASKS[ ii ].id, att )
