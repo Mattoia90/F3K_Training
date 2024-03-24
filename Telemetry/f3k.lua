@@ -129,6 +129,7 @@ createMenu = function()
 		{ id='K', desc='Big Ladder' },
 		{ id='L', desc='One flight' },
 		{ id='M', desc='Huge ladder' },
+		{ id='N', desc='Best Flight' },
 		{ id='A', desc='Last flight (7 min)', win=7 },
 		{ id='B', desc='Last two (7 min)', win=7 },
 		{ id='D2', desc='Small Ladder'},
@@ -147,7 +148,7 @@ createMenu = function()
 		local halfMenuEntries = 3
 		for i=0,6 do
 			local att = 0
-			if i == 3 then
+			if i == halfMenuEntries then
 				att = INVERS
 			end
 			local ii = i + selection - halfMenuEntries + 1
@@ -171,8 +172,10 @@ createMenu = function()
 		end
 		--if the switch is set start the current task
 		if getValue( Options.MenuSwitch ) >= 0 then
+			--if the menu switch was enable set the current path
 			currentTask = dofile( taskPath .. TASKS[ selection + 1 ].id .. '.lua' )
-			local win = TASKS[ selection + 1 ].win or 10
+			--select operating time from win or default 10 minutes.
+			local win = TASKS[ selection + 1 ].win or 10 
 			init( win * 60 )
 		end
 
