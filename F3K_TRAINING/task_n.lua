@@ -8,9 +8,8 @@
 
 local taskN = dofile( F3K_SCRIPT_PATH .. 'besttaskbase.lua' )
 
-taskN.MAX_FLIGHT_TIME = 600
+taskN.MAX_FLIGHT_TIME = 599
 taskN.BEST_COUNT = 1
-
 
 -- public interface
 function taskN.init( win )

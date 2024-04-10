@@ -151,10 +151,8 @@ createMenu = function()
 		for i=0,6 do
 			local att = 0
 			if i == halfMenuEntries then
-			if i == halfMenuEntries then
 				att = INVERS
 			end
-			local ii = i + selection - halfMenuEntries + 1
 			local ii = i + selection - halfMenuEntries + 1
 			if ii >= 1 and ii <= #TASKS then
 				lcd.drawText( 10, 1 + 9 * i, TASKS[ ii ].id, att )

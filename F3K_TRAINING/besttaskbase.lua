@@ -7,11 +7,8 @@
 
 local taskBase = dofile( F3K_SCRIPT_PATH .. 'taskbase.lua' )
 
-
-
 taskBase.BEST_COUNT = 0
 taskBase.saidSorry = false
-
 
 function taskBase.earlyReset()
 	if taskBase.earlyResetBase() then
@@ -44,6 +41,5 @@ function taskBase.landedState()
 		end
 	end
 end
-
 
 return taskBase

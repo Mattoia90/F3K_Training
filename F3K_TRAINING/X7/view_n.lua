@@ -2,7 +2,7 @@
 	F3K Training - 	Mike, ON4MJ
 
 	X7/view_n.lua
-	Q7 view for the Best Flight task
+	Q7 view for the Best Flight
 --]]
 
 
@@ -13,20 +13,12 @@ local display = dofile( F3K_SCRIPT_PATH .. 'X7/viewbase.lua' )
 function task.display()
 	display.drawCommonLastBest( task )
 
-	if task.state == 4 then	-- landed
-		if task.possibleImprovement > 0 then
-			lcd.drawText( 94, 4, 'Improv.', SMLSIZE )
-			lcd.drawText( 94, 14, 'margin', SMLSIZE )
-			lcd.drawTimer( 98, 26, task.possibleImprovement, 0 )
-		end
+	if task.state == 4 and task.times.getVal( task.BEST_COUNT ) >= task.timer1.getVal() then
+		lcd.drawText( 95, 6, 'Done !', BOLD )
 	end
+	lcd.drawLine( 91, 20, 127, 20, SOLID, 2 )
 
-	if task.shoutedStop or task.timer1.getVal() <= 0 then
-		lcd.drawText( 96, 18, 'Done !', 0 )
-	end
-
-	lcd.drawLine( 90, 41, 127, 41, SOLID, 2 )
-	task.times.draw( 100, 44, 1, 0 )
+	task.times.draw( 100, 24, 1, 0)
 
 	return OpenTX.backgroundRun( task )
 end
