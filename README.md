@@ -1,7 +1,7 @@
 # F3K TRAINING
 
 Actual version: 
-#### 3.03B2
+#### 3.03B3
 
 Original project on: https://www.rcgroups.com/forums/showthread.php?2298914-F3K-training-script-for-the-Taranis-Q-and-Horus/page22
 
