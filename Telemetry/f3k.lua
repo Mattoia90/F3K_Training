@@ -1,4 +1,4 @@
-F3KVersion = '3.03B'
+F3KVersion = '3.03B3'
 --[[
 	F3K Training - 	Mike, ON4MJ
 
@@ -59,10 +59,12 @@ F3KVersion = '3.03B'
 			Task M Each competitor must launch his/her model glider exactly three (3) times to achieve three (3) target times as follows: 3:00 (180 seconds), 5:00 (300 seconds), 7:00 (420 seconds). 
 				The targets must be flown in the increasing order as specified. The actual times of each flight up to (not exceeding) the target time will be added up and used as the final score for the task. 
 				The competitors do not have to reach or exceed the target times to count each flight time. Working time: 15 minutes.
-	3.03 (BETA2) - Mattoia90 - Changed only apply to Taranis X7.
+	3.03 (BETA 2) - Mattoia90 - Changed only apply to Taranis X7.
 			Task M - Huge Ladder fix view.
 			Menu fix when start with throttle down and start switch on.
 			Add some comment on code
+	3.03 (BETA 3) - Mattoia90 - Add New Task N (Best Flight).
+			Task N - Best Flight add new FAI TASK
 --]]
 
 F3K_SCRIPT_PATH = "/SCRIPTS/F3K_TRAINING/"
@@ -72,7 +74,6 @@ OpenTX = dofile( F3K_SCRIPT_PATH .. 'opentx_srv.lua' )
 
 createTimer = dofile( F3K_SCRIPT_PATH .. 'timer.lua' )
 createTimeKeeper = dofile( F3K_SCRIPT_PATH .. 'timekeeper.lua' )
-
 
 -- This is assigned here with defaults for non-Widgets compatibility
 -- With Widgets on Horus in OpenTX 2.2, Context will get assigned by create()
@@ -129,7 +130,6 @@ createMenu = function()
 		{ id='K', desc='Big Ladder' },
 		{ id='L', desc='One flight' },
 		{ id='M', desc='Huge ladder' },
-		{ id='N', desc='Best Flight' },
 		{ id='N', desc='Best Flight' },
 		{ id='A', desc='Last flight (7 min)', win=7 },
 		{ id='B', desc='Last two (7 min)', win=7 },
