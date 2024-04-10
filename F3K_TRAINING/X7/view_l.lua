@@ -25,17 +25,15 @@ function task.display()
 	for i=0,0 do
 		local y = 2
 		local max = 600
-
-		lcd.drawText( 100, y, '9:59', 0 )
+		lcd.drawText( 100, y, '09:59', 0 )
 
 		local val = task.times.getVal( 3-task.current+i )
-		lcd.drawTimer( 106, y, val, 0 )
+		lcd.drawTimer( 100, y+20, val, 0 )
 		total = total + math.min( max, val )
-
 	end
 
 	lcd.drawFilledRectangle( 85, 47, 52, 18, 0 )
-	lcd.drawTimer( 106, 53, total, INVERS )
+	lcd.drawTimer( 100, 53, total, INVERS )
 
 	return OpenTX.backgroundRun( task )
 end
