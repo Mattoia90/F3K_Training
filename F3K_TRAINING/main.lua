@@ -1,4 +1,4 @@
-F3KVersion = '3.02'
+F3KVersion = '3.03B3'
 --[[
 	F3K Training - 	Mike, ON4MJ
 
@@ -51,6 +51,20 @@ F3KVersion = '3.02'
 	3.01	Horus widget fix : browsing through widgets to install a new one in another zone broke an already installed Training widget.
 	3.02	Added AULD
 		Fixed a regression introduced in 3.00 where a false launch could be detected when running the same task more than once
+	3.03 (BETA) - CIRRUS_UK  --   Changed only apply to Taranis X9.   Work not done on X7 and Horus
+			Moved old Task M (Big Ladder) to correct Task K.   Moved old Task D (Small Ladder) to Task D2.  
+			---- New Tasks ----     
+			Task D (Two flights) - Each competitor has two (2) flights. These two flights will be added together. The maximum accounted single flight time is 300 seconds. Working time is 10 minutes.
+			Task L (One flight)  - During the working time, the competitor may launch his model glider one single time. The maximum flight time is limited to 599 seconds (9 minutes 59 seconds).  Working time: 10 minutes.
+			Task M Each competitor must launch his/her model glider exactly three (3) times to achieve three (3) target times as follows: 3:00 (180 seconds), 5:00 (300 seconds), 7:00 (420 seconds). 
+				The targets must be flown in the increasing order as specified. The actual times of each flight up to (not exceeding) the target time will be added up and used as the final score for the task. 
+				The competitors do not have to reach or exceed the target times to count each flight time. Working time: 15 minutes.
+	3.03 (BETA 2) - Mattoia90 - Changed only apply to Taranis X7.
+			Task M - Huge Ladder fix view.
+			Menu fix when start with throttle down and start switch on.
+			Add some comment on code	
+	3.03 (BETA 3) - Mattoia90 - Add New Task N (Best Flight).
+			Task N - Best Flight add new FAI TASK
 --]]
 
 F3K_SCRIPT_PATH = "/WIDGETS/F3K_TRAINING/"
@@ -131,12 +145,15 @@ createMenu = function()
 		{ id='H', desc='1234' },
 		{ id='I', desc='Best three' },
 		{ id='J', desc='Last three' },
+		{ id='K', desc='Big Ladder' },
 		{ id='L', desc='One flight' },
-		{ id='M', desc='Big Ladder' },
+		{ id='M', desc='Huge ladder' },
+		{ id='N', desc='Best Flight' },
 		{ id='A', desc='Last flight (7 min)', win=7 },
 		{ id='B', desc='Last two (7 min)', win=7 },
-		{ id='QT', desc='QT practice (13 x 45s)' },
-		{ id='FF', desc='Free flight (simple timer)' }
+		{ id='D2', desc='Small Ladder'},
+		{ id='QT', desc='QT practice (13x45s)'},
+		{ id='FF', desc='Free flight' }
 	}
 
 	local function dummy()
