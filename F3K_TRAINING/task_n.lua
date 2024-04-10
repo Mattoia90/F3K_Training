@@ -6,17 +6,16 @@
 --]]
 
 
-local taskN = dofile( F3K_SCRIPT_PATH .. 'lasttaskbase.lua' )
-
+local taskN = dofile( F3K_SCRIPT_PATH .. 'besttaskbase.lua' )
 
 taskN.MAX_FLIGHT_TIME = 600
-taskN.COUNT = 1
+taskN.BEST_COUNT = 1
 
 
 -- public interface
 function taskN.init( win )
 	taskN.WINDOW_TIME = win
-	taskN.commonInit( 'Best Flight', taskN.COUNT, 'taskn' )
+	taskN.commonInit( 'Best Flight', taskN.BEST_COUNT, 'taskn' )
 end
 
 
