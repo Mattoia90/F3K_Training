@@ -143,8 +143,8 @@ local function runningTwoPointThree( widget )
 	openTX.backgroundRun = function( obj )
 		return obj.background()
 	end
-	openTX.MINUTES = UNIT_MINUTES
-	openTX.SECONDS = UNIT_SECONDS
+	openTX.MINUTES = 36
+	openTX.SECONDS = 37
 
 	if widget then
 		openTX.lcd = createWidgetLayer()
