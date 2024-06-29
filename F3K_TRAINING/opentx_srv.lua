@@ -173,16 +173,23 @@ end
 
 ok, msg = pcall( function()
 	local ver = getVersion()
-	print("Read version "..ver)
+
+	local major, minor, patch = ver:match("^(%d+)%.(%d+)%.?(%d*)$")
+	print("Read version " .. major .. '.' .. minor .. '.' .. patch)
+
+	-- Convert major and minor to numbers
+	major = tonumber(major)
+	minor = tonumber(minor)
+
 	if type( ver ) == 'string' then
 		local ver = string.sub( ver, 1, 3 )
-		if ver == '2.0' then
+		if major == 2 and minor == 0 then
 			--print( 'F3K: OpenTX Version Detected = 2.0' )
 			runningTwoPointZero()
-		elseif ver == '2.1' then
+		elseif major == 2 and minor == 1 then
 			--print( 'F3K: OpenTX Version Detected = 2.1' )
 			runningTwoPointOne()
-		elseif ver == '2.2' then
+		elseif major == 2 and minor == 2 then
 			--print( 'F3K: OpenTX Version Detected = 2.2' )
 			runningTwoPointTwo( widget )
 		else
