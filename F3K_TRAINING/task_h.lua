@@ -103,11 +103,7 @@ function taskH.flyingState()
 			if t ~= taskH.previousTime then
 				local sec = t % 60
 				if sec > 44 or sec == 30 then
-					if playDuration then
-						playDuration( sec, 0 )
-					else
-						playNumber( sec, OpenTX.SECONDS, 0 )
-					end
+					playNumber( sec, 0, 0 )
 					taskH.previousTime = t
 				end
 			end
