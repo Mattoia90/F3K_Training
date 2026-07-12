@@ -1,0 +1,20 @@
+name: Run F3K Training Tests
+
+on: [push, pull_request]
+
+jobs:
+  test:
+    name: Lua Unit Tests
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Lua 5.4
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y lua5.4
+
+      - name: Run test suite
+        run: lua5.4 tests/run_tests.lua

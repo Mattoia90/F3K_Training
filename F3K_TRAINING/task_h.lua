@@ -118,6 +118,15 @@ function taskH.init()
 	taskH.wav = 'taskh'
 
 	taskH.times = createTimeKeeper( 4, taskH.MAX_FLIGHT_TIME )
+	taskH.times.getTotal = function(n)
+		local targets = { 240, 180, 120, 60 }
+		local tot = 0
+		local num_slots = n or 4
+		for i = 1, num_slots do
+			tot = tot + math.min( taskH.times.getVal(i), targets[i] )
+		end
+		return tot
+	end
 	taskH.state = 1
 
 	taskH.initPrepTimer()
