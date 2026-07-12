@@ -1,0 +1,21 @@
+name: Run F3K Training Tests
+
+on:
+  push:
+    branches: [ '**' ]
+  pull_request:
+    branches: [ '**' ]
+
+jobs:
+  test:
+    name: Lua Unit Tests
+    runs-on: ubuntu-latest
+    container:
+      image: lua:5.4-alpine
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Run test suite
+        run: lua tests/run_tests.lua
