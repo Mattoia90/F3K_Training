@@ -2,7 +2,7 @@
 	F3K Training - 	Mike, ON4MJ
 
 	WBig/view_d.lua
-	Big widget view for the Ladder task
+	Big widget view for the Two Flights task
 --]]
 
 
@@ -16,36 +16,27 @@ function task.display( context )
 	if task.done then
 		OpenTX.lcd.drawText( 160, 129, 'Done !', MIDSIZE )
 	else
-		OpenTX.lcd.drawText( 140, 133, task.MAX_FLIGHT_TIME .. 's: ', 0 )
+		OpenTX.lcd.drawText( 140, 133, '5min: ', 0 )
 		task.timer2.drawReverse( 192, 129, MIDSIZE )
 	end
 
-	if task.current > 1 then
-		OpenTX.lcd.drawFilledRectangle( 281, 1, context.zone.w - 281, 17 * (task.current - 1) + 4, TEXT_INVERTED_BGCOLOR )
-	end
+	local total = 0
+	for i=0,1 do
+		local y = 10 + 21 * i
+		OpenTX.lcd.drawText( 290, y, '5min', 0 )
 
-	for i=0,6 do
-		local att = 0
 		if i < task.current - 1 then
-			att = INVERS
-		end
-
-		local y = 2 + 17 * i
-		OpenTX.lcd.drawNumber( 314, y, 30 + 15*i, att + RIGHT )
-		OpenTX.lcd.drawText( 314, y, 's', att )
-
-		if i < task.current then
-			local val = task.flights[ i+1 ]
-			if val then
-				OpenTX.lcd.drawTimer( 334, y, val, att )
-			end
+			local val = task.times.getVal( 4 - task.current + i )
+			OpenTX.lcd.drawTimer( 338, y, val, 0 )
+			total = total + math.min( task.MAX_FLIGHT_TIME, val )
 		end
 	end
 
 	OpenTX.lcd.drawFilledRectangle( 281, 130, context.zone.w - 281, context.zone.h - 130, TEXT_INVERTED_BGCOLOR )
-	OpenTX.lcd.drawTimer( 312, 139, task.times.getTotal(), INVERS )
+	OpenTX.lcd.drawTimer( 312, 139, total, INVERS )
 
 	return OpenTX.backgroundRun( task )
 end
+
 
 return { init=task.init, background=task.background, display=task.display }

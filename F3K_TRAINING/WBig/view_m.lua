@@ -2,7 +2,7 @@
 	F3K Training - 	Mike, ON4MJ
 
 	WBig/view_m.lua
-	Big widget view for the Big Ladder task
+	Big widget view for the Huge Ladder task
 --]]
 
 

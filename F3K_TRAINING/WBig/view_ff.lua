@@ -1,7 +1,7 @@
 --[[
 	F3K Training - 	Mike, ON4MJ
 
-	WBig/task_ff.lua
+	WBig/view_ff.lua
 	Big widget view for the Free Flight task
 --]]
 

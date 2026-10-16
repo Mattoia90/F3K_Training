@@ -2,7 +2,7 @@
 	F3K Training - 	Mike, ON4MJ
 
 	WBig/view_n.lua
-	Big widget view for the Best Flight
+	Big widget view for the Best Flight task
 --]]
 
 
