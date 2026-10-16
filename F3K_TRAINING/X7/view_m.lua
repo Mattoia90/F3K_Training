@@ -26,8 +26,8 @@ function task.display()
 	local y = 3
 	for i=0,2 do
 		local max = 180 + 120 * i
-		lcd.drawNumber( 86, y, max, SMLSIZE + RIGHT )
-		lcd.drawText( lcd.getLastPos(), y, 's', SMLSIZE )
+		-- Same fixed-width label as the Big Ladder view (RIGHT alignment differs across firmwares)
+		lcd.drawText( 85, y, string.format( '%3ds', max ), SMLSIZE )
 
 		if i < task.current - 1 then
 			local val = task.times.getVal( 5 - task.current + i )

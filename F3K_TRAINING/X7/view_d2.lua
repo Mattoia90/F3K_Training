@@ -32,8 +32,8 @@ function task.display()
 		end
 
 		local y = 2 + 9 * i
-		lcd.drawNumber( 86, y, 30 + 15 * i, att + RIGHT + SMLSIZE )
-		lcd.drawText( lcd.getLastPos(), y, 's', att + SMLSIZE )
+		-- Same fixed-width label as the Big Ladder view (RIGHT alignment differs across firmwares)
+		lcd.drawText( 85, y, string.format( '%3ds', 30 + 15 * i ), att + SMLSIZE )
 
 		if i < task.current then
 			local val = task.flights[ i+1 ]
