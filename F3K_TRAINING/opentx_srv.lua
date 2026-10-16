@@ -172,17 +172,18 @@ if not ok then
 end
 
 ok, msg = pcall( function()
-	local ver = getVersion()
-
-	local major, minor, patch = ver:match("^(%d+)%.(%d+)%.?(%d*)$")
-	print("Read version " .. major .. '.' .. minor .. '.' .. patch)
-
-	-- Convert major and minor to numbers
-	major = tonumber(major)
-	minor = tonumber(minor)
+	local ver, radio, major, minor = getVersion()
 
 	if type( ver ) == 'string' then
-		local ver = string.sub( ver, 1, 3 )
+		-- Prefer the numeric values returned by getVersion() (OpenTX >= 2.1 / EdgeTX).
+		-- Otherwise parse the string, which may carry a suffix (e.g. EdgeTX "2.12.0-selfbuild")
+		if type( major ) ~= 'number' or type( minor ) ~= 'number' then
+			major, minor = string.match( ver, '^(%d+)%.(%d+)' )
+			major = tonumber( major )
+			minor = tonumber( minor )
+		end
+		--print( 'F3K: Read version ' .. ver )
+
 		if major == 2 and minor == 0 then
 			--print( 'F3K: OpenTX Version Detected = 2.0' )
 			runningTwoPointZero()
