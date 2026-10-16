@@ -1,4 +1,4 @@
-F3KVersion = '3.03B3'
+F3KVersion = '3.03B4'
 --[[
 	F3K Training - 	Mike, ON4MJ
 
@@ -65,6 +65,8 @@ F3KVersion = '3.03B3'
 			Add some comment on code	
 	3.03 (BETA 3) - Mattoia90 - Add New Task N (Best Flight).
 			Task N - Best Flight add new FAI TASK
+	3.03 (BETA 4) - EdgeTX 2.10/2.12 version detection, EdgeTX announcements, menu selection,
+			X7 telemetry values, display alignment fixes, Task H fixes, Task N sounds, unit tests.
 --]]
 
 F3K_SCRIPT_PATH = "/WIDGETS/F3K_TRAINING/"

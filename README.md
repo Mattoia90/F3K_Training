@@ -1,7 +1,7 @@
 # F3K TRAINING
 
 Actual version: 
-#### 3.03B3
+#### 3.03B4
 
 Original project on: https://www.rcgroups.com/forums/showthread.php?2298914-F3K-training-script-for-the-Taranis-Q-and-Horus/page22
 
@@ -21,6 +21,16 @@ Select in the radio the F3K model, go to model setting on section "DISPLAY", in 
 Now you can go in the corresponding page of the telemetry, select your task, toggle the sc switch and play with f3k training!!
 
 
+
+### Version 3.03B4
+1. Fix version detection on EdgeTX 2.10 / 2.12 (widget crash on Horus/TX16S).
+2. Fix duration/time announcements on EdgeTX.
+3. Fix menu selection with throttle.
+4. Basic telemetry values on X7.
+5. Display alignment fixes (K, M, D2, QT on X7; D, D2 on Horus widget).
+6. Task H (1234): no "seconds" at minute countdown, score capped per target slot.
+7. Task N sounds added (+10 dB).
+8. Unit tests for all tasks and GitHub Actions CI.
 
 ### Version 3.03B3
 1. Add New Task N Best Flight.
