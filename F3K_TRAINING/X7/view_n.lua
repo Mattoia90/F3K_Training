@@ -2,7 +2,7 @@
 	F3K Training - 	Mike, ON4MJ
 
 	X7/view_n.lua
-	Q7 view for the Best Flight
+	Q7 view for the Best Flight task
 --]]
 
 

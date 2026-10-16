@@ -1,8 +1,8 @@
 --[[
 	F3K Training - 	Mike, ON4MJ
 
-	X9/view_d.lua
-	Taranis view for the Ladder task
+	X9/view_d2.lua
+	Taranis view for the Small Ladder task
 --]]
 
 

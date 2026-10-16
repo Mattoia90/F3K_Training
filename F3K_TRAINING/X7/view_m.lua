@@ -2,7 +2,7 @@
 	F3K Training - 	Mike, ON4MJ
 
 	X7/view_m.lua
-	Q7 view for the Big Ladder practice task
+	Q7 view for the Huge Ladder task
 --]]
 
 

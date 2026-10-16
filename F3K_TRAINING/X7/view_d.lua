@@ -2,7 +2,7 @@
 	F3K Training - 	Mike, ON4MJ
 
 	X7/view_d.lua
-	Q7 view for the Ladder task
+	Q7 view for the Two Flights task
 --]]
 
 

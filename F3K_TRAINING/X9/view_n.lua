@@ -2,7 +2,7 @@
 	F3K Training - 	Mike, ON4MJ
 
 	X9/view_n.lua
-	Taranis view for the Best Flight
+	Taranis view for the Best Flight task
 --]]
 
 

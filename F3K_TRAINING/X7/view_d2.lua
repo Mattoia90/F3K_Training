@@ -1,8 +1,8 @@
 --[[
 	F3K Training - 	Mike, ON4MJ
 
-	X7/view_d.lua
-	Q7 view for the Ladder task
+	X7/view_d2.lua
+	Q7 view for the Small Ladder task
 --]]
 
 

@@ -1,8 +1,8 @@
 --[[
 	F3K Training - 	CIRRUS_RC   08 Mar 2020
 
-	view_d.lua
-	Task D : Two Flights (10 min window)
+	X9/view_d.lua
+	Taranis view for the Two Flights task (10 min window)
 	Each competitor has two (2) flights. These two flights will be added together. The maximum accounted single flight time is 300 seconds. Working time is 10 minutes.
 --]]
 
