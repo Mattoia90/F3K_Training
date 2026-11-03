@@ -21,12 +21,23 @@ In the same Custom.lua file, the line local TASK_DESCRIPTION = true selects how 
 - true: the task description is played, then the prep time countdown announces only 10..1 (the description has time to finish).
 - false: no task description, the prep time is shorter and the countdown starts directly from local PREP_COUNTDOWN seconds (default 10, e.g. 5 for a faster start; range 1..10).
 
+## CONFIGURATION PAGE (config/index.html)
+Instead of editing Custom.lua by hand you can use the configuration page included in the `config` folder (offline, no installation needed).
+1. Open `config/index.html` in a browser (Chrome or Edge recommended: they can save the file in place; other browsers download the updated file).
+2. Click "Open custom.lua…" (or drop the file on the page) and select `F3K_TRAINING/custom.lua`, either from this folder or directly from the radio SD card ('SDVolume':\SCRIPTS\F3K_TRAINING\custom.lua).
+3. Choose your radio model (FrSky Taranis X9D Plus 2019, Q X7, X-Lite Pro, RadioMaster Zorro, TX16S) to see where the switches are, then click a control on the drawing to assign it, or use "Apply example settings".
+4. Set PRELAUNCH_SWITCH, MENU_SWITCH, MENU_SCROLL_ENCODER, TASK_DESCRIPTION and PREP_COUNTDOWN (1..10). Switches, buttons, pots, sliders and sticks not shown on the drawing can be selected from the lists or typed with "Other…".
+5. Click "Save" (or "Download custom.lua") and copy the file to 'SDVolume':\SCRIPTS\F3K_TRAINING\ if you did not save it there directly.
+
+Only those five values are changed; the rest of custom.lua is kept as it is. The radio drawings follow the manufacturers' manuals: check the switches in the radio's hardware / switch test screen if your radio was modified.
+
 ## HOW TO SET F3K TRAINING
 Select in the radio the F3K model, go to model setting on section "DISPLAY", in a one empty screen select "script" and then select "f3k.lua".
 Now you can go in the corresponding page of the telemetry, select your task, toggle the sc switch and play with f3k training!!
 
 ### Version 3.04
 1. New TASK_DESCRIPTION option in custom.lua: prep countdown announced by the script from 10 (no more delay behind the task description), optional fast start without task description.
+2. New configuration page `config/index.html` to edit custom.lua (switches, menu scroll input, task description, prep countdown) with radio switch layouts.
 
 ### Version 3.03B4
 1. Fix version detection on EdgeTX 2.10 / 2.12 (widget crash on Horus/TX16S).
