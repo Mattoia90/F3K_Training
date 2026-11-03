@@ -22,6 +22,15 @@ local HEIGHT = { 'GAlt', 'Valt' }
 
 local SOUND_PATH = F3K_SCRIPT_PATH .. 'sounds/'
 
+-- Task description at task start
+--   true  : play the task description, then the prep time countdown announces 10..1
+--   false : no task description, short prep time counting down directly from PREP_COUNTDOWN
+local TASK_DESCRIPTION = true
+
+-- Prep time countdown (seconds) used when TASK_DESCRIPTION = false
+-- e.g. 10 (default) or 5 for a faster start; valid range 1..10
+local PREP_COUNTDOWN = 10
+
 
 
 
@@ -101,6 +110,8 @@ return {
 	RADIO_VOLTAGE = RADIO_VOLTAGE,
 	MODEL_VOLTAGE = MODEL_VOLTAGE,
 	HEIGHT = HEIGHT,
+	TASK_DESCRIPTION = TASK_DESCRIPTION,
+	PREP_COUNTDOWN = PREP_COUNTDOWN,
 
 	resetLaunchDetection = resetLaunchDetection,
 	launched = launched,

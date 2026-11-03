@@ -16,6 +16,11 @@ This you can manage the prestet swicth to start / stop timer correctly.
 2. Open the Custom.lua file.
 3. search this line local PRELAUNCH_SWITCH = 'se' and change 'se' with your preset switch if it is not equal.
 
+## CUSTOMIZE TASK DESCRIPTION / PREP COUNTDOWN
+In the same Custom.lua file, the line local TASK_DESCRIPTION = true selects how a task starts:
+- true: the task description is played, then the prep time countdown announces only 10..1 (the description has time to finish).
+- false: no task description, the prep time is shorter and the countdown starts directly from local PREP_COUNTDOWN seconds (default 10, e.g. 5 for a faster start; range 1..10).
+
 ## HOW TO SET F3K TRAINING
 Select in the radio the F3K model, go to model setting on section "DISPLAY", in a one empty screen select "script" and then select "f3k.lua".
 Now you can go in the corresponding page of the telemetry, select your task, toggle the sc switch and play with f3k training!!
@@ -31,6 +36,7 @@ Now you can go in the corresponding page of the telemetry, select your task, tog
 6. Task H (1234): no "seconds" at minute countdown, score capped per target slot.
 7. Task N sounds added (+10 dB).
 8. Unit tests for all tasks and GitHub Actions CI.
+9. New TASK_DESCRIPTION option in custom.lua: prep countdown announced by the script from 10 (no more delay behind the task description), optional fast start without task description.
 
 ### Version 3.03B3
 1. Add New Task N Best Flight.

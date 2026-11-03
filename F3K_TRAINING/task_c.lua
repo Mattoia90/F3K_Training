@@ -34,7 +34,9 @@ end
 function taskC.resetState()
 	-- Wait for the start of the task
 	if getValue( Options.MenuSwitch ) > 0 then
-		taskC.playSound( taskC.wav )
+		if F3KConfig.TASK_DESCRIPTION then
+			taskC.playSound( taskC.wav )
+		end
 
 		-- reset the scores
 		taskC.times.reset()

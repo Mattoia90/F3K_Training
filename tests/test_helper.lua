@@ -31,6 +31,8 @@ function helper.select_and_load_task(idx)
   mock_env.setSwitch("thr", thr_val)
   
   local main_script = dofile("./Telemetry/f3k.lua")
+  -- Task tests expect the task description + full prep time, whatever custom.lua says
+  F3KConfig.TASK_DESCRIPTION = true
   main_script.run() -- render menu
   
   mock_env.setSwitch("sc", 1024) -- active run mode

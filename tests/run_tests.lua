@@ -22,6 +22,7 @@ dofile("tests/test_task_l.lua")
 dofile("tests/test_task_m.lua")
 dofile("tests/test_task_n.lua")
 dofile("tests/test_task_qt.lua")
+dofile("tests/test_prep_countdown.lua")
 
 print("=======================================")
 print(string.format("Test Results: %d passed, %d failed", helper.passed, helper.failed))

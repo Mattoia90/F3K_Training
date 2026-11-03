@@ -15,6 +15,7 @@
 
 local taskBase = {
 	PREP_TIME = 16,
+	COUNTDOWN_START = 10,	-- prep time countdown is announced from this value (with task description)
 	WINDOW_TIME = 600,
 
 	MAX_FLIGHT_TIME,
@@ -38,7 +39,10 @@ local taskBase = {
 	flightCount = 0,
 
 	shoutedStop = false,
-	wellDone = false
+	wellDone = false,
+
+	countdownStart = 10,	-- countdown start in use (COUNTDOWN_START or F3KConfig.PREP_COUNTDOWN)
+	lastCountdown = 0	-- last prep time second announced
 }
 
 	-- Some common stuff
@@ -75,7 +79,30 @@ function taskBase.initFlightTimer()
 end
 
 function taskBase.initPrepTimer()
-	taskBase.timer1 = createTimer( 0, taskBase.PREP_TIME, 2, false )
+	-- The prep countdown is announced by the script (see prepCountdown), not by the radio,
+	-- so that it doesn't get queued behind the task description
+	local prepTime
+	if F3KConfig.TASK_DESCRIPTION then
+		taskBase.countdownStart = taskBase.COUNTDOWN_START
+		prepTime = taskBase.PREP_TIME
+	else
+		-- user defined short prep time (custom.lua), limited to 1..COUNTDOWN_START
+		local cd = tonumber( F3KConfig.PREP_COUNTDOWN ) or taskBase.COUNTDOWN_START
+		cd = math.max( 1, math.min( taskBase.COUNTDOWN_START, math.floor( cd ) ) )
+		taskBase.countdownStart = cd
+		prepTime = cd
+	end
+	taskBase.timer1 = createTimer( 0, prepTime, 0, false )
+	taskBase.lastCountdown = taskBase.countdownStart + 1
+end
+
+
+function taskBase.prepCountdown()
+	local val = taskBase.timer1.getVal()
+	if val > 0 and val <= taskBase.countdownStart and val < taskBase.lastCountdown then
+		taskBase.lastCountdown = val
+		playNumber( val, 0, 0 )
+	end
 end
 
 
@@ -137,7 +164,9 @@ end
 function taskBase.resetState()
 	-- Wait for the start of the task
 	if getValue( Options.MenuSwitch ) > 0 then
-		taskBase.playSound( taskBase.wav )
+		if F3KConfig.TASK_DESCRIPTION then
+			taskBase.playSound( taskBase.wav )
+		end
 
 		-- reset the scores
 		taskBase.times.reset()
@@ -145,6 +174,7 @@ function taskBase.resetState()
 		taskBase.initPrepTimer()
 		taskBase.initFlightTimer()
 		taskBase.timer1.start()
+		taskBase.prepCountdown()
 
 		taskBase.state = 2
 	elseif getValue( Options.MenuSwitch ) < 0 then
@@ -160,8 +190,11 @@ function taskBase.startedState()
 			taskBase.timer1.start()
 
 			taskBase.state = 4
-		elseif F3KConfig.launched() then		-- allow the rotation to happen during prep time
-			taskBase.playSound( 'badflight' )	-- but not the launch itself
+		else
+			taskBase.prepCountdown()
+			if F3KConfig.launched() then		-- allow the rotation to happen during prep time
+				taskBase.playSound( 'badflight' )	-- but not the launch itself
+			end
 		end
 	end
 end
