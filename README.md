@@ -1,7 +1,7 @@
 # F3K TRAINING
 
 Actual version: 
-#### 3.04.01
+#### 3.04.02
 
 Original project on: https://www.rcgroups.com/forums/showthread.php?2298914-F3K-training-script-for-the-Taranis-Q-and-Horus/page22
 
@@ -32,13 +32,21 @@ Date;Time;Task;Window;Status;Flights
 - Status: END (task completed) or STOP (stopped with the switch).
 - Flights: every flight time in seconds, in the order flown.
 
-To analyse the logs open `config/tasklog.html` (or the "TaskLog" link at the top of the configuration page) and load one or more CSV files: it shows the flights of each session against their targets, the END / STOP status and a score normalized to 1000 (1000 = every target fully reached; Free Flight has no target).
+To analyse the logs open the TaskLog page https://rcglideranalytics.com/F3kTraining/TaskLog (or the "TaskLog" link at the top of the configuration page) and load one or more CSV files: it shows the flights of each session against their targets, the END / STOP status and a score normalized to 1000 (1000 = every target fully reached; Free Flight has no target).
 
 The file is written only once per task, so logging doesn't slow down the timers. The TasksLog folder must exist on the SD card (it is included in F3K_TRAINING): Lua scripts can't create folders, so without it nothing is written.
 
-## CONFIGURATION PAGE (config/index.html)
-Instead of editing Custom.lua by hand you can use the configuration page included in the `config` folder (offline, no installation needed).
-1. Open `config/index.html` in a browser (Chrome or Edge recommended: they can save the file in place; other browsers download the updated file).
+## CONFIGURATION PAGE
+Instead of editing Custom.lua by hand you can use the online configuration page (no installation needed).
+The configuration and task log pages are now hosted on:
+- Configurator: https://rcglideranalytics.com/F3kTraining/Configurator
+- TaskLog: https://rcglideranalytics.com/F3kTraining/TaskLog
+
+With the login you can save your configurations and reuse them later.
+
+**Version upgrade:** when you install a new version of F3K Training, if the new version contains a changed custom.lua file, your custom.lua must be set again starting from the new version's file (open the new custom.lua in the Configurator and apply your saved configuration), otherwise the new options are missing.
+
+1. Open https://rcglideranalytics.com/F3kTraining/Configurator in a browser (Chrome or Edge recommended: they can save the file in place; other browsers download the updated file).
 2. Click "Open custom.lua…" (or drop the file on the page) and select `F3K_TRAINING/custom.lua`, either from this folder or directly from the radio SD card ('SDVolume':\SCRIPTS\F3K_TRAINING\custom.lua).
 3. Choose your radio model (FrSky Taranis X9D Plus 2019, Q X7, X-Lite Pro, RadioMaster Zorro, TX16S) to see where the switches are, then click a control on the drawing to assign it, or use "Apply example settings".
 4. Set PRELAUNCH_SWITCH, MENU_SWITCH, MENU_SCROLL_ENCODER, TASK_DESCRIPTION, PREP_COUNTDOWN (1..10) and TASK_LOG. Switches, buttons, pots, sliders and sticks not shown on the drawing can be selected from the lists or typed with "Other…".
@@ -49,6 +57,11 @@ Only those six values are changed; the rest of custom.lua is kept as it is. The 
 ## HOW TO SET F3K TRAINING
 Select in the radio the F3K model, go to model setting on section "DISPLAY", in a one empty screen select "script" and then select "f3k.lua".
 Now you can go in the corresponding page of the telemetry, select your task, toggle the sc switch and play with f3k training!!
+
+### Version 3.04.02
+1. The configuration page and the task log viewer are no longer included in the `config` folder: they are now hosted on https://rcglideranalytics.com/F3kTraining/Configurator and https://rcglideranalytics.com/F3kTraining/TaskLog.
+2. With the login the configurations can be saved on the site.
+3. When upgrading, if custom.lua has changed in the new version it must be set again starting from the new version's custom.lua.
 
 ### Version 3.04.01
 1. New TASK_LOG option in custom.lua: history of the tasks flown in TasksLog/yyyyMMdd.csv (one file per day), written once at the end of each task (END) or when it is stopped with the switch (STOP).
