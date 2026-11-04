@@ -31,6 +31,13 @@ local TASK_DESCRIPTION = true
 -- e.g. 10 (default) or 5 for a faster start; valid range 1..10
 local PREP_COUNTDOWN = 10
 
+-- Task history log
+--   true  : at the end of each task (or when it is stopped after at least one flight)
+--           a line is appended to TasksLog/yyyyMMdd.csv (one file per day)
+--   false : no log
+-- NB: the TasksLog folder must exist on the SD card (Lua scripts can't create folders)
+local TASK_LOG = false
+
 
 
 
@@ -112,6 +119,7 @@ return {
 	HEIGHT = HEIGHT,
 	TASK_DESCRIPTION = TASK_DESCRIPTION,
 	PREP_COUNTDOWN = PREP_COUNTDOWN,
+	TASK_LOG = TASK_LOG,
 
 	resetLaunchDetection = resetLaunchDetection,
 	launched = launched,

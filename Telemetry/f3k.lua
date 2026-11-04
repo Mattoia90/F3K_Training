@@ -1,4 +1,4 @@
-F3KVersion = '3.03B4'
+F3KVersion = '3.04.01'
 --[[
 	F3K Training - 	Mike, ON4MJ
 

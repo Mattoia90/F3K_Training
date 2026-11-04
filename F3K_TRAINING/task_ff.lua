@@ -128,7 +128,14 @@ end
 
 -- Run the correct function based on the current state
 function taskFF.background()
-	({ taskFF.resetState, taskFF.startedState, taskFF.flyingState, taskFF.landedState, taskFF.endState })[ taskFF.state ]()
+	local prev = taskFF.state
+	local states = { taskFF.resetState, taskFF.startedState, taskFF.flyingState, taskFF.landedState, taskFF.endState }
+	states[ prev ]()
+
+	-- Task log: free flight never ends by itself, so it's written when the user stops it
+	if F3KConfig.TASK_LOG and (prev == 3 or prev == 4) and taskFF.state == 1 then
+		dofile( F3K_SCRIPT_PATH .. 'tasklog.lua' )( taskFF, 'STOP' )
+	end
 	return taskFF.running
 end
 

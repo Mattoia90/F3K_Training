@@ -1,0 +1,470 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>F3K Task Log</title>
+<style>
+  :root {
+    --bg: #f5f6f8; --card: #ffffff; --fg: #1d2330; --muted: #5d6678;
+    --border: #d5d9e0; --accent: #1f6feb; --accent-fg: #ffffff;
+    --err: #c62828; --code: #eef0f4; --grid: #e6e8ec;
+    --end: #2a78d6; --stop: #eb6834; --off: #b9bec8;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #12151b; --card: #1b1f27; --fg: #e4e7ec; --muted: #9aa3b2;
+      --border: #313847; --accent: #4c8dff; --accent-fg: #0b0e13;
+      --err: #ff6b6b; --code: #11141a; --grid: #2a303c;
+      --end: #3987e5; --stop: #d95926; --off: #4a5262;
+    }
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0; background: var(--bg); color: var(--fg);
+    font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  nav.top { background: var(--card); border-bottom: 1px solid var(--border); }
+  nav.top .in { max-width: 960px; margin: 0 auto; padding: 0 16px; display: flex; gap: 4px; align-items: center; }
+  nav.top .brand { font-weight: 700; margin-right: 12px; }
+  nav.top a { color: var(--muted); text-decoration: none; padding: 12px 10px; border-bottom: 2px solid transparent; }
+  nav.top a:hover { color: var(--fg); }
+  nav.top a[aria-current="page"] { color: var(--fg); border-bottom-color: var(--accent); font-weight: 600; }
+  main { max-width: 960px; margin: 0 auto; padding: 24px 16px 48px; }
+  h1 { font-size: 1.5rem; margin: 0 0 4px; }
+  p.lead { margin: 0 0 20px; color: var(--muted); }
+  .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 18px; margin-bottom: 16px; }
+  .card h2 { font-size: 1.05rem; margin: 0 0 12px; }
+  .row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+  button, select {
+    font: inherit; padding: 7px 12px; border-radius: 6px; cursor: pointer;
+    border: 1px solid var(--border); background: var(--card); color: var(--fg);
+  }
+  button.primary { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+  .hint { color: var(--muted); font-size: .88rem; }
+  code { background: var(--code); padding: 1px 5px; border-radius: 4px; }
+  #drop { border: 2px dashed var(--border); border-radius: 8px; padding: 14px; text-align: center; color: var(--muted); margin-top: 12px; }
+  #drop.over { border-color: var(--accent); color: var(--fg); }
+  #status { margin-top: 10px; font-size: .92rem; min-height: 1.3em; color: var(--muted); }
+  #status.err { color: var(--err); }
+  .hidden { display: none !important; }
+
+  /* Stat tiles */
+  .tiles { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 16px; }
+  .tile { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 12px 14px; }
+  .tile .k { color: var(--muted); font-size: .82rem; }
+  .tile .v { font-size: 1.6rem; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .tile .v small { font-size: .9rem; font-weight: 400; color: var(--muted); }
+
+  /* Legend / status badges */
+  .legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: .85rem; color: var(--muted); margin-bottom: 8px; }
+  .sw { display: inline-block; width: 10px; height: 10px; border-radius: 50%; margin-right: 5px; vertical-align: -1px; }
+  .sw.end { background: var(--end); } .sw.stop { background: var(--stop); }
+  .sw.bar { border-radius: 2px; } .sw.off { background: var(--off); }
+  .sw.tgt { width: 14px; height: 0; border-top: 2px solid var(--fg); border-radius: 0; vertical-align: 3px; }
+  .badge { display: inline-flex; align-items: center; gap: 5px; font-size: .78rem; font-weight: 700; padding: 1px 8px; border-radius: 10px; border: 1px solid var(--border); }
+  .badge.end .sw { background: var(--end); } .badge.stop .sw { background: var(--stop); }
+
+  /* Charts */
+  svg { display: block; width: 100%; height: auto; overflow: visible; }
+  svg .grid { stroke: var(--grid); stroke-width: 1; }
+  svg .axis { fill: var(--muted); font-size: 11px; }
+  svg .dot { stroke: var(--card); stroke-width: 2; }
+  svg .dot.end, svg .bar.end { fill: var(--end); }
+  svg .dot.stop, svg .bar.stop { fill: var(--stop); }
+  svg .bar.off { fill: var(--off); }
+  svg .tgt { stroke: var(--fg); stroke-width: 2; }
+  svg .hit { fill: transparent; cursor: pointer; }
+  svg .hit:hover + .dot, svg .dot:hover { stroke: var(--fg); }
+  svg .val { fill: var(--muted); font-size: 10px; text-anchor: middle; }
+
+  /* Tables / sessions */
+  table { width: 100%; border-collapse: collapse; font-size: .9rem; }
+  th, td { text-align: left; padding: 7px 8px; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; font-size: .82rem; }
+  td.n, th.n { text-align: right; font-variant-numeric: tabular-nums; }
+  .tablewrap { overflow-x: auto; }
+  .session { border: 1px solid var(--border); border-left: 4px solid var(--end); border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; }
+  .session.stop { border-left-color: var(--stop); }
+  .session .head { display: flex; flex-wrap: wrap; gap: 6px 12px; align-items: baseline; margin-bottom: 6px; }
+  .session .task { font-weight: 700; }
+  .session .when { color: var(--muted); font-size: .85rem; }
+  .session .score { margin-left: auto; font-weight: 700; font-variant-numeric: tabular-nums; }
+  .session .score small { color: var(--muted); font-weight: 400; }
+  .meter { height: 6px; background: var(--grid); border-radius: 3px; overflow: hidden; margin-bottom: 8px; }
+  .meter span { display: block; height: 100%; background: var(--end); border-radius: 3px; }
+  .session.stop .meter span { background: var(--stop); }
+
+  #tip {
+    position: fixed; pointer-events: none; z-index: 10; background: var(--card); color: var(--fg);
+    border: 1px solid var(--border); border-radius: 6px; padding: 6px 9px; font-size: .82rem;
+    box-shadow: 0 4px 14px rgba(0,0,0,.18); max-width: 260px;
+  }
+  #tip b { font-variant-numeric: tabular-nums; }
+</style>
+</head>
+<body>
+<nav class="top"><div class="in">
+  <span class="brand">F3K Training</span>
+  <a href="index.html">Home</a>
+  <a href="tasklog.html" aria-current="page">TaskLog</a>
+</div></nav>
+
+<main>
+  <h1>Task log viewer</h1>
+  <p class="lead">Load one or more <code>TasksLog/yyyyMMdd.csv</code> files from the radio SD card to see the flights and a score normalized to 1000 (1000 = every target fully reached).</p>
+
+  <section class="card">
+    <h2>Load log files</h2>
+    <div class="row">
+      <button id="btnOpen" class="primary" type="button">Open log files…</button>
+      <input id="fileInput" type="file" accept=".csv,text/csv" multiple hidden>
+      <button id="btnSample" type="button">Load sample</button>
+    </div>
+    <div id="drop">…or drop the files here</div>
+    <div id="status">No file loaded.</div>
+  </section>
+
+  <div id="results" class="hidden">
+    <section class="card">
+      <div class="row">
+        <label for="fTask" class="hint">Task</label>
+        <select id="fTask"></select>
+        <label for="fStatus" class="hint">Status</label>
+        <select id="fStatus">
+          <option value="">All</option>
+          <option value="END">END (completed)</option>
+          <option value="STOP">STOP (stopped)</option>
+        </select>
+      </div>
+    </section>
+
+    <div class="tiles" id="tiles"></div>
+
+    <section class="card">
+      <h2>Score over time</h2>
+      <div class="legend">
+        <span><i class="sw end"></i>END: task completed</span>
+        <span><i class="sw stop"></i>STOP: task stopped with the switch</span>
+      </div>
+      <div id="trend"></div>
+    </section>
+
+    <section class="card">
+      <h2>By task</h2>
+      <div class="tablewrap"><table id="byTask"></table></div>
+    </section>
+
+    <section class="card">
+      <h2>Sessions</h2>
+      <div class="legend">
+        <span><i class="sw bar end"></i>Counted flight (END)</span>
+        <span><i class="sw bar stop"></i>Counted flight (STOP)</span>
+        <span><i class="sw bar off"></i>Not counted</span>
+        <span><i class="sw tgt"></i>Target</span>
+      </div>
+      <div id="sessions"></div>
+    </section>
+  </div>
+</main>
+<div id="tip" class="hidden"></div>
+
+<script>
+(function () {
+  'use strict';
+  var $ = function (id) { return document.getElementById(id); };
+
+  // ---- Scoring rules (same as the Lua tasks), keyed by the task name written in the log ----
+  //   last  : last n flights count, each capped at cap
+  //   first : first n flights count, each capped at cap
+  //   best  : best n flights count, each capped at cap
+  //   ladder: flight i counts up to targets[i], in order
+  //   poker : best flights sorted, matched to targets sorted (1234)
+  function rule(name, win) {
+    switch (name.toLowerCase()) {
+      case 'last flight': return { kind: 'last', n: 1, cap: 300 };
+      case 'last two':    return { kind: 'last', n: 2, cap: win === 420 ? 180 : 240 };
+      case 'last three':  return { kind: 'last', n: 3, cap: 180 };
+      case 'auld':        return { kind: 'first', n: 5, cap: 180 };
+      case 'two flights': return { kind: 'first', n: 2, cap: 300 };
+      case 'one flight':  return { kind: 'first', n: 1, cap: 599 };
+      case 'qt practice': return { kind: 'first', n: 13, cap: 45 };
+      case '3oo6':        return { kind: 'best', n: 3, cap: 180 };
+      case '5x2':         return { kind: 'best', n: 5, cap: 120 };
+      case 'best three':  return { kind: 'best', n: 3, cap: 200 };
+      case 'best flight': return { kind: 'best', n: 1, cap: 599 };
+      case 'big ladder':  return { kind: 'ladder', targets: [60, 90, 120, 150, 180] };
+      case 'huge ladder': return { kind: 'ladder', targets: [180, 300, 420] };
+      case 'ladder':      return { kind: 'ladder', targets: [30, 45, 60, 75, 90, 105, 120] };
+      case '1234':        return { kind: 'poker', targets: [240, 180, 120, 60] };
+      default:            return null;	// Free Flight: no target, no score
+    }
+  }
+
+  function score(s) {
+    var r = rule(s.task, s.window), f = s.flights;
+    var per = f.map(function (t) { return { t: t, target: null, counted: false, credit: 0 }; });
+    if (!r) return { per: per, score: null, max: null, norm: null };
+
+    var idx = [], targets = [];
+    if (r.kind === 'last' || r.kind === 'first' || r.kind === 'best') {
+      var all = f.map(function (_, i) { return i; });
+      if (r.kind === 'last') idx = all.slice(-r.n);
+      else if (r.kind === 'first') idx = all.slice(0, r.n);
+      else idx = all.sort(function (a, b) { return Math.min(f[b], r.cap) - Math.min(f[a], r.cap) || a - b; }).slice(0, r.n);
+      per.forEach(function (p) { p.target = r.cap; });
+      idx.forEach(function (i) { targets[i] = r.cap; });
+      var max = r.n * r.cap;
+    } else if (r.kind === 'ladder') {
+      r.targets.forEach(function (t, i) { if (i < f.length) { idx.push(i); targets[i] = t; per[i].target = t; } });
+      max = r.targets.reduce(function (a, b) { return a + b; }, 0);
+    } else {	// poker
+      var order = f.map(function (_, i) { return i; }).sort(function (a, b) { return f[b] - f[a] || a - b; });
+      order.slice(0, r.targets.length).forEach(function (i, k) { idx.push(i); targets[i] = r.targets[k]; per[i].target = r.targets[k]; });
+      max = r.targets.reduce(function (a, b) { return a + b; }, 0);
+    }
+    var tot = 0;
+    idx.forEach(function (i) {
+      per[i].counted = true;
+      per[i].credit = Math.min(f[i], targets[i]);
+      tot += per[i].credit;
+    });
+    return { per: per, score: tot, max: max, norm: Math.round(tot / max * 1000) };
+  }
+
+  // ---- Parsing ----
+  function parse(text, fileName) {
+    var out = [], bad = 0;
+    text.split(/\r?\n/).forEach(function (line) {
+      line = line.trim();
+      if (!line || /^Date;/i.test(line)) return;
+      var c = line.split(';');
+      var status = (c[4] || '').toUpperCase();
+      if (c.length < 5 || !/^\d{4}-\d{2}-\d{2}$/.test(c[0]) || (status !== 'END' && status !== 'STOP')) { bad++; return; }
+      var s = {
+        date: c[0], time: c[1], task: c[2], window: parseInt(c[3], 10) || 0, status: status,
+        flights: c.slice(5).filter(function (v) { return v !== ''; }).map(Number).filter(function (v) { return isFinite(v); }),
+        file: fileName
+      };
+      s.key = s.date + ' ' + s.time;
+      s.res = score(s);
+      out.push(s);
+    });
+    return { sessions: out, bad: bad };
+  }
+
+  var data = [];
+
+  function addFiles(list) {
+    var texts = list.map(function (x) { return parse(x.text, x.name); });
+    var seen = {};
+    data.forEach(function (s) { seen[s.key + s.task] = true; });
+    var added = 0, bad = 0;
+    texts.forEach(function (r) {
+      bad += r.bad;
+      r.sessions.forEach(function (s) {
+        if (seen[s.key + s.task]) return;	// same file loaded twice
+        seen[s.key + s.task] = true;
+        data.push(s); added++;
+      });
+    });
+    data.sort(function (a, b) { return a.key < b.key ? -1 : a.key > b.key ? 1 : 0; });
+    var st = $('status');
+    st.className = added || data.length ? '' : 'err';
+    st.textContent = data.length
+      ? data.length + ' sessions loaded (' + list.map(function (x) { return x.name; }).join(', ') + ')' + (bad ? ' · ' + bad + ' invalid lines skipped' : '')
+      : 'No valid log line found. Expected: Date;Time;Task;Window;Status;Flights';
+    buildTaskFilter();
+    render();
+  }
+
+  function readFiles(files) {
+    Promise.all(Array.prototype.map.call(files, function (f) {
+      return f.text().then(function (t) { return { name: f.name, text: t }; });
+    })).then(addFiles);
+  }
+
+  $('btnOpen').addEventListener('click', function () { $('fileInput').click(); });
+  $('fileInput').addEventListener('change', function (e) { readFiles(e.target.files); e.target.value = ''; });
+  var drop = $('drop');
+  drop.addEventListener('dragover', function (e) { e.preventDefault(); drop.classList.add('over'); });
+  drop.addEventListener('dragleave', function () { drop.classList.remove('over'); });
+  drop.addEventListener('drop', function (e) { e.preventDefault(); drop.classList.remove('over'); readFiles(e.dataTransfer.files); });
+
+  $('btnSample').addEventListener('click', function () {
+    addFiles([{ name: 'sample.csv', text: [
+      'Date;Time;Task;Window;Status;Flights',
+      '2026-11-03;10:05:12;Last Flight;600;END;50;212;268',
+      '2026-11-03;10:22:40;1234;600;END;235;170;118;61',
+      '2026-11-03;10:41:03;Big Ladder;600;STOP;62;91;84',
+      '2026-11-03;11:02:55;Free Flight;0;STOP;180;245',
+      '2026-11-04;09:30:10;3oo6;600;END;175;120;181;90;160',
+      '2026-11-04;09:48:30;Last Flight;600;END;300;290',
+      '2026-11-04;10:07:21;1234;600;END;241;182;125;65',
+      '2026-11-04;10:25:02;Huge Ladder;900;STOP;180;250',
+      '2026-11-04;10:52:44;Big Ladder;600;END;61;92;121;149;175'
+    ].join('\n') }]);
+  });
+
+  // ---- Filters ----
+  function buildTaskFilter() {
+    var sel = $('fTask'), cur = sel.value, names = {};
+    data.forEach(function (s) { names[s.task] = true; });
+    sel.innerHTML = '<option value="">All tasks</option>' + Object.keys(names).sort().map(function (n) {
+      return '<option>' + esc(n) + '</option>';
+    }).join('');
+    sel.value = names[cur] ? cur : '';
+  }
+  $('fTask').addEventListener('change', render);
+  $('fStatus').addEventListener('change', render);
+
+  function filtered() {
+    var t = $('fTask').value, st = $('fStatus').value;
+    return data.filter(function (s) { return (!t || s.task === t) && (!st || s.status === st); });
+  }
+
+  // ---- Helpers ----
+  function esc(s) { return String(s).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+  function mmss(t) { var m = Math.floor(t / 60), s = Math.round(t % 60); return m + ':' + (s < 10 ? '0' : '') + s; }
+  function svgEl(w, h, body, label) {
+    return '<svg viewBox="0 0 ' + w + ' ' + h + '" role="img" aria-label="' + esc(label) + '">' + body + '</svg>';
+  }
+
+  // ---- Tooltip ----
+  var tip = $('tip');
+  document.addEventListener('mousemove', function (e) {
+    var t = e.target.closest ? e.target.closest('[data-tip]') : null;
+    if (!t) { tip.classList.add('hidden'); return; }
+    tip.innerHTML = t.getAttribute('data-tip');
+    tip.classList.remove('hidden');
+    var x = e.clientX + 14, y = e.clientY + 14, r = tip.getBoundingClientRect();
+    if (x + r.width > window.innerWidth - 8) x = e.clientX - r.width - 14;
+    if (y + r.height > window.innerHeight - 8) y = e.clientY - r.height - 14;
+    tip.style.left = x + 'px'; tip.style.top = y + 'px';
+  });
+
+  // ---- Render ----
+  // Charts are drawn at the real container width, so text keeps its size on a phone
+  function chartWidth(el) { return Math.max(280, Math.round(el.clientWidth || 900)); }
+  var resizeTimer;
+  window.addEventListener('resize', function () { clearTimeout(resizeTimer); resizeTimer = setTimeout(render, 150); });
+
+  function render() {
+    $('results').classList.toggle('hidden', data.length === 0);
+    if (!data.length) return;
+    var list = filtered();
+    var scored = list.filter(function (s) { return s.res.norm !== null; });
+    renderTiles(list, scored);
+    renderTrend(scored);
+    renderByTask(list);
+    renderSessions(list);
+  }
+
+  function renderTiles(list, scored) {
+    var ends = list.filter(function (s) { return s.status === 'END'; }).length;
+    var avg = scored.length ? Math.round(scored.reduce(function (a, s) { return a + s.res.norm; }, 0) / scored.length) : null;
+    var best = scored.length ? Math.max.apply(null, scored.map(function (s) { return s.res.norm; })) : null;
+    var flights = list.reduce(function (a, s) { return a + s.flights.length; }, 0);
+    var air = list.reduce(function (a, s) { return a + s.flights.reduce(function (b, t) { return b + t; }, 0); }, 0);
+    function tile(k, v) { return '<div class="tile"><div class="k">' + k + '</div><div class="v">' + v + '</div></div>'; }
+    $('tiles').innerHTML =
+      tile('Sessions', list.length + ' <small>' + ends + ' END · ' + (list.length - ends) + ' STOP</small>') +
+      tile('Average score', avg === null ? '–' : avg + ' <small>/ 1000</small>') +
+      tile('Best score', best === null ? '–' : best + ' <small>/ 1000</small>') +
+      tile('Flights', flights + ' <small>' + mmss(air) + ' in the air</small>');
+  }
+
+  function renderTrend(scored) {
+    if (!scored.length) { $('trend').innerHTML = '<p class="hint">No scored session (Free Flight has no target).</p>'; return; }
+    var W = chartWidth($('trend')), H = 240, L = 40, R = 12, T = 10, B = 26;
+    var n = scored.length, pw = W - L - R, ph = H - T - B;
+    var x = function (i) { return L + (n === 1 ? pw / 2 : i * pw / (n - 1)); };
+    var y = function (v) { return T + ph - v / 1000 * ph; };
+    var g = '';
+    [0, 250, 500, 750, 1000].forEach(function (v) {
+      g += '<line class="grid" x1="' + L + '" x2="' + (W - R) + '" y1="' + y(v) + '" y2="' + y(v) + '"/>' +
+           '<text class="axis" x="' + (L - 6) + '" y="' + (y(v) + 4) + '" text-anchor="end">' + v + '</text>';
+    });
+    // date labels: first session of each day
+    var lastDay = '';
+    scored.forEach(function (s, i) {
+      if (s.date !== lastDay) {
+        lastDay = s.date;
+        g += '<text class="axis" x="' + x(i) + '" y="' + (H - 6) + '" text-anchor="' + (i === 0 ? 'start' : 'middle') + '">' + s.date.slice(5) + '</text>';
+      }
+    });
+    var hw = Math.max(8, Math.min(30, pw / n / 2));
+    scored.forEach(function (s, i) {
+      var t = '<b>' + s.res.norm + '</b> / 1000 · ' + esc(s.task) + '<br>' + esc(s.date + ' ' + s.time) + ' · ' + s.status +
+              '<br>' + s.res.score + ' s of ' + s.res.max + ' s';
+      g += '<g data-tip="' + esc(t) + '"><rect class="hit" x="' + (x(i) - hw) + '" y="' + T + '" width="' + 2 * hw + '" height="' + ph + '"/>' +
+           '<circle class="dot ' + s.status.toLowerCase() + '" cx="' + x(i) + '" cy="' + y(s.res.norm) + '" r="5"/></g>';
+    });
+    $('trend').innerHTML = svgEl(W, H, g, 'Normalized score of each session over time');
+  }
+
+  function renderByTask(list) {
+    var by = {};
+    list.forEach(function (s) {
+      var b = by[s.task] || (by[s.task] = { n: 0, end: 0, scores: [], last: null });
+      b.n++; if (s.status === 'END') b.end++;
+      if (s.res.norm !== null) { b.scores.push(s.res.norm); b.last = s.res.norm; }
+    });
+    var rows = Object.keys(by).sort().map(function (k) {
+      var b = by[k], sc = b.scores;
+      var avg = sc.length ? Math.round(sc.reduce(function (a, v) { return a + v; }, 0) / sc.length) : '–';
+      return '<tr><td>' + esc(k) + '</td><td class="n">' + b.n + '</td><td class="n">' + b.end + '</td><td class="n">' + (b.n - b.end) +
+             '</td><td class="n">' + avg + '</td><td class="n">' + (sc.length ? Math.max.apply(null, sc) : '–') +
+             '</td><td class="n">' + (b.last === null ? '–' : b.last) + '</td></tr>';
+    }).join('');
+    $('byTask').innerHTML = '<thead><tr><th>Task</th><th class="n">Sessions</th><th class="n">END</th><th class="n">STOP</th>' +
+      '<th class="n">Average</th><th class="n">Best</th><th class="n">Last</th></tr></thead><tbody>' + rows + '</tbody>';
+  }
+
+  function flightChart(s) {
+    var per = s.res.per;
+    if (!per.length) return '';
+    var top = Math.max.apply(null, per.map(function (p) { return Math.max(p.t, p.target || 0); })) || 1;
+    var W = chartWidth($('sessions')) - 28, H = 116, T = 20, B = 4, ph = H - T - B;
+    var slot = Math.min(90, W / per.length), bw = Math.max(6, slot * 0.6);
+    var x0 = 0, st = s.status.toLowerCase(), g = '';
+    per.forEach(function (p, i) {
+      var cx = x0 + slot * i + slot / 2;
+      var h = Math.max(2, p.t / top * ph);
+      var tipText = 'Flight ' + (i + 1) + ': <b>' + mmss(p.t) + '</b> (' + p.t + ' s)' +
+        (p.target ? '<br>Target ' + mmss(p.target) : '') +
+        (s.res.score === null ? '' : '<br>' + (p.counted ? 'Counted: ' + p.credit + ' s' : 'Not counted'));
+      g += '<g data-tip="' + esc(tipText) + '">' +
+        '<rect class="hit" x="' + (cx - slot / 2) + '" y="0" width="' + slot + '" height="' + H + '"/>' +
+        '<rect class="bar ' + (p.counted || s.res.score === null ? st : 'off') + '" x="' + (cx - bw / 2) + '" y="' + (T + ph - h) + '" width="' + bw + '" height="' + h + '" rx="3"/>';
+      if (p.target) {
+        var ty = T + ph - p.target / top * ph;
+        g += '<line class="tgt" x1="' + (cx - bw / 2 - 4) + '" x2="' + (cx + bw / 2 + 4) + '" y1="' + ty + '" y2="' + ty + '"/>';
+      }
+      // value label above the bar and above the target tick
+      var labelY = T + ph - Math.max(h, p.target ? p.target / top * ph : 0) - 5;
+      if (slot >= 28) g += '<text class="val" x="' + cx + '" y="' + labelY + '">' + mmss(p.t) + '</text>';
+      g += '</g>';
+    });
+    return svgEl(W, H, g, 'Flight times of ' + s.task + ' on ' + s.date + ' ' + s.time);
+  }
+
+  function renderSessions(list) {
+    if (!list.length) { $('sessions').innerHTML = '<p class="hint">No session matches the filters.</p>'; return; }
+    $('sessions').innerHTML = list.slice().reverse().map(function (s) {
+      var st = s.status.toLowerCase(), r = s.res;
+      var sc = r.norm === null ? '<span class="hint">no target</span>'
+        : r.norm + ' <small>/ 1000 · ' + r.score + ' s of ' + r.max + ' s</small>';
+      return '<div class="session ' + st + '">' +
+        '<div class="head"><span class="task">' + esc(s.task) + '</span>' +
+        '<span class="badge ' + st + '"><i class="sw"></i>' + s.status + '</span>' +
+        '<span class="when">' + esc(s.date + ' ' + s.time) + (s.window ? ' · window ' + mmss(s.window) : '') + ' · ' + s.flights.length + ' flights</span>' +
+        '<span class="score">' + sc + '</span></div>' +
+        (r.norm === null ? '' : '<div class="meter"><span style="width:' + (r.norm / 10) + '%"></span></div>') +
+        flightChart(s) + '</div>';
+    }).join('');
+  }
+})();
+</script>
+</body>
+</html>

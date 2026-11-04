@@ -239,7 +239,15 @@ end
 
 -- Run the correct function based on the current state
 function taskBase.background()
-	({ taskBase.resetState, taskBase.startedState, taskBase.flyingState, taskBase.landedState, taskBase.endState })[ taskBase.state ]()
+	local prev = taskBase.state
+	local states = { taskBase.resetState, taskBase.startedState, taskBase.flyingState, taskBase.landedState, taskBase.endState }
+	states[ prev ]()
+
+	-- Task log: written once, when the task ends (5) or is stopped by the user (1)
+	local st = taskBase.state
+	if F3KConfig.TASK_LOG and (prev == 3 or prev == 4) and (st == 5 or st == 1) then
+		dofile( F3K_SCRIPT_PATH .. 'tasklog.lua' )( taskBase, st == 5 and 'END' or 'STOP' )
+	end
 	return taskBase.running
 end
 

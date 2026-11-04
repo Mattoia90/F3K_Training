@@ -50,6 +50,10 @@ function getTime()
   return mock_time
 end
 
+function getDateTime()
+  return { year = 2026, mon = 11, day = 4, hour = 15, min = 32, sec = 10 }
+end
+
 function playFile(filename)
   table.insert(played_sounds, { type = "file", value = filename })
   print(string.format("  🔊 [AUDIO] File: %s", filename))
@@ -169,8 +173,19 @@ function dofile(path)
     end
   end
   
-  local result = original_dofile(local_path)
-  
+  -- Scripts run as on the radio: the 'table' library is not available there
+  -- (globals they define still go to _G, so tests can inspect them)
+  local result
+  if local_path:match("^%./F3K_TRAINING/") or local_path:match("^%./Telemetry/") then
+    local radio_env = setmetatable({}, {
+      __index = function(_, k) if k ~= "table" then return _G[k] end end,
+      __newindex = _G
+    })
+    result = assert(loadfile(local_path, "t", radio_env))()
+  else
+    result = original_dofile(local_path)
+  end
+
   if local_path:match("timer%.lua$") then
     local original_createTimer = result
     result = function(timerId, startValue, countdownBeep, minuteBeep)

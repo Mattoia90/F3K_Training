@@ -11,17 +11,20 @@
 function createTimeKeeper( size, limit )
 	local tab = {}
 	local LIMIT = limit
+	local flights = {}	-- every recorded flight, in the order flown (for the task log)
 
 
 	local function initialize( size )
 		for i=1,size do
 			tab[ i ] = 0
 		end
+		flights = {}
 	end
 
 
 	-- insert time at the right place in a sorted list
 	local function addTime( t )
+		flights[ #flights + 1 ] = t
 		local i = #tab - 1
 		while i > 0 and t > tab[ i ] do
 			tab[ i + 1 ] = tab[ i ]
@@ -33,6 +36,7 @@ function createTimeKeeper( size, limit )
 
 	-- stacks time, discarding the older values
 	local function pushTime( t )
+		flights[ #flights + 1 ] = t
 		local size = #tab - 1
 		for i=2,size do
 			tab[ i-1 ] = tab[ i ]
@@ -85,7 +89,8 @@ function createTimeKeeper( size, limit )
 		getVal=getVal,
 		getTotal=getTotal,
 		reset=reset,
-		draw=draw
+		draw=draw,
+		getFlights=function() return flights end
 	}
 end
 

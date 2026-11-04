@@ -9,6 +9,7 @@
 local taskC = dofile( F3K_SCRIPT_PATH .. 'taskbase.lua' )
 
 taskC.MAX_FLIGHT_TIME = 180
+taskC.WINDOW_TIME = 0	-- no work time (only used by the task log)
 
 
 

@@ -22,6 +22,12 @@
     margin: 0; background: var(--bg); color: var(--fg);
     font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
   }
+  nav.top { background: var(--card); border-bottom: 1px solid var(--border); }
+  nav.top .in { max-width: 760px; margin: 0 auto; padding: 0 16px; display: flex; gap: 4px; align-items: center; }
+  nav.top .brand { font-weight: 700; margin-right: 12px; }
+  nav.top a { color: var(--muted); text-decoration: none; padding: 12px 10px; border-bottom: 2px solid transparent; }
+  nav.top a:hover { color: var(--fg); }
+  nav.top a[aria-current="page"] { color: var(--fg); border-bottom-color: var(--accent); font-weight: 600; }
   main { max-width: 760px; margin: 0 auto; padding: 24px 16px 48px; }
   h1 { font-size: 1.5rem; margin: 0 0 4px; }
   p.lead { margin: 0 0 20px; color: var(--muted); }
@@ -115,6 +121,11 @@
 </style>
 </head>
 <body>
+<nav class="top"><div class="in">
+  <span class="brand">F3K Training</span>
+  <a href="index.html" aria-current="page">Home</a>
+  <a href="tasklog.html">TaskLog</a>
+</div></nav>
 <main>
   <h1>F3K Training configurator</h1>
   <p class="lead">Edit the user settings of <code>F3K_TRAINING/custom.lua</code>. Only the values below are changed; the rest of the file is kept as is.</p>
@@ -188,6 +199,13 @@
         </div>
         <div class="hint" id="prepHint">Range 1..10. Used only when Task description is off.</div>
       </div>
+      <div class="field" id="logField">
+        <div class="check">
+          <input id="TASK_LOG" type="checkbox">
+          <label class="title" for="TASK_LOG" style="margin:0">Task history log <code>TASK_LOG</code></label>
+        </div>
+        <div class="hint">On: at the end of each task (or when it is stopped after at least one flight) a line is appended to <code>SCRIPTS/F3K_TRAINING/TasksLog/yyyyMMdd.csv</code>. The <code>TasksLog</code> folder must exist on the SD card.<span id="logOld" hidden><br>This custom.lua has no <code>TASK_LOG</code> line: update it to the latest version to enable the log.</span></div>
+      </div>
     </fieldset>
   </section>
 
@@ -241,7 +259,8 @@
     MENU_SWITCH:         { kind: 'source', groups: SWITCH_GROUPS },
     MENU_SCROLL_ENCODER: { kind: 'source', groups: ANALOG_GROUPS.concat(SWITCH_GROUPS) },
     TASK_DESCRIPTION:    { kind: 'bool' },
-    PREP_COUNTDOWN:      { kind: 'int', min: 1, max: 10 }
+    PREP_COUNTDOWN:      { kind: 'int', min: 1, max: 10 },
+    TASK_LOG:            { kind: 'bool', optional: true }	// missing in custom.lua files older than the task log
   };
 
   // Matches an uncommented "local NAME = value" line, capturing prefix and value.
@@ -309,13 +328,14 @@
     refresh();
   });
   taskDesc.addEventListener('change', refresh);
+  $('TASK_LOG').addEventListener('change', refresh);
 
   // ---- Parse / build ----
   function parse(text) {
     var values = {}, missing = [];
     Object.keys(PARAMS).forEach(function (name) {
       var m = lineRegex(name).exec(text);
-      if (!m) { missing.push(name); return; }
+      if (!m) { if (!PARAMS[name].optional) missing.push(name); return; }
       var raw = m[2];
       if (raw[0] === "'" || raw[0] === '"') {
         state.quotes[name] = raw[0];
@@ -340,7 +360,7 @@
         if (bad) errors.push(name + ': invalid source name');
         values[name] = v;
       } else if (p.kind === 'bool') {
-        values[name] = taskDesc.checked;
+        values[name] = $(name).checked;
       } else {
         var n = Number(prepNum.value);
         var badN = !(Number.isInteger(n) && n >= p.min && n <= p.max);
@@ -421,6 +441,12 @@
     taskDesc.checked = v.TASK_DESCRIPTION === true;
     prepNum.value = v.PREP_COUNTDOWN;
     prepRange.value = Math.max(1, Math.min(10, v.PREP_COUNTDOWN));
+    // An older custom.lua has no TASK_LOG line: nothing to change there
+    var hasLog = 'TASK_LOG' in v;
+    $('TASK_LOG').checked = v.TASK_LOG === true;
+    $('TASK_LOG').disabled = !hasLog;
+    $('logField').classList.toggle('dim', !hasLog);
+    $('logOld').hidden = hasLog;
     $('form').disabled = false;
     $('btnSave').textContent = state.handle ? 'Save' : 'Save as…';
     refresh();
@@ -851,6 +877,7 @@
   setSource('MENU_SWITCH', 'sc');
   setSource('MENU_SCROLL_ENCODER', 'thr');
   taskDesc.checked = true;
+  $('TASK_LOG').checked = false;
   prepNum.value = prepRange.value = 10;
   refresh();
 })();
