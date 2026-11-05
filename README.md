@@ -1,7 +1,7 @@
 # F3K TRAINING
 
 Actual version: 
-#### 3.04.02
+#### 3.04.04
 
 Original project on: https://www.rcgroups.com/forums/showthread.php?2298914-F3K-training-script-for-the-Taranis-Q-and-Horus/page22
 
@@ -19,7 +19,15 @@ This you can manage the prestet swicth to start / stop timer correctly.
 ## CUSTOMIZE TASK DESCRIPTION / PREP COUNTDOWN
 In the same Custom.lua file, the line local TASK_DESCRIPTION = true selects how a task starts:
 - true: the task description is played, then the prep time countdown announces only 10..1 (the description has time to finish).
-- false: no task description, the prep time is shorter and the countdown starts directly from local PREP_COUNTDOWN seconds (default 10, e.g. 5 for a faster start; range 1..10).
+- false: no task description, the prep time is shorter and the countdown starts directly from local PREP_COUNTDOWN seconds (default 10, e.g. 5 for a faster start; range 0..10).
+
+### Start at the first launch (PREP_COUNTDOWN = 0)
+With TASK_DESCRIPTION = false and PREP_COUNTDOWN = 0 there is no prep time and no countdown:
+1. Select the task and move the menu switch to run: the task waits, showing the full working time.
+2. Hold the prelaunch switch (more than 0.6 s) and release it when you launch: the working time and the first flight start together.
+3. A quick pull of the prelaunch switch while waiting is ignored.
+
+Task C (AULD) and Free Flight have no prep time and are not affected.
 
 ## TASK HISTORY LOG
 In the same Custom.lua file, set local TASK_LOG = true to keep a history of the tasks flown.
@@ -49,7 +57,7 @@ With the login you can save your configurations and reuse them later.
 1. Open https://rcglideranalytics.com/F3kTraining/Configurator in a browser (Chrome or Edge recommended: they can save the file in place; other browsers download the updated file).
 2. Click "Open custom.lua…" (or drop the file on the page) and select `F3K_TRAINING/custom.lua`, either from this folder or directly from the radio SD card ('SDVolume':\SCRIPTS\F3K_TRAINING\custom.lua).
 3. Choose your radio model (FrSky Taranis X9D Plus 2019, Q X7, X-Lite Pro, RadioMaster Zorro, TX16S) to see where the switches are, then click a control on the drawing to assign it, or use "Apply example settings".
-4. Set PRELAUNCH_SWITCH, MENU_SWITCH, MENU_SCROLL_ENCODER, TASK_DESCRIPTION, PREP_COUNTDOWN (1..10) and TASK_LOG. Switches, buttons, pots, sliders and sticks not shown on the drawing can be selected from the lists or typed with "Other…".
+4. Set PRELAUNCH_SWITCH, MENU_SWITCH, MENU_SCROLL_ENCODER, TASK_DESCRIPTION, PREP_COUNTDOWN (0..10) and TASK_LOG. Switches, buttons, pots, sliders and sticks not shown on the drawing can be selected from the lists or typed with "Other…".
 5. Click "Save" (or "Download custom.lua") and copy the file to 'SDVolume':\SCRIPTS\F3K_TRAINING\ if you did not save it there directly.
 
 Only those six values are changed; the rest of custom.lua is kept as it is. The radio drawings follow the manufacturers' manuals: check the switches in the radio's hardware / switch test screen if your radio was modified.
@@ -57,6 +65,12 @@ Only those six values are changed; the rest of custom.lua is kept as it is. The 
 ## HOW TO SET F3K TRAINING
 Select in the radio the F3K model, go to model setting on section "DISPLAY", in a one empty screen select "script" and then select "f3k.lua".
 Now you can go in the corresponding page of the telemetry, select your task, toggle the sc switch and play with f3k training!!
+
+### Version 3.04.04
+1. New PREP_COUNTDOWN = 0 option (with TASK_DESCRIPTION = false): no prep time and no countdown, the task waits and the first launch with the prelaunch switch (held more than 0.6 s, then released) starts the working time and the first flight together. A quick pull while waiting is ignored. See "Start at the first launch (PREP_COUNTDOWN = 0)".
+2. Task C (AULD) and Free Flight have no prep time and are not affected; PREP_COUNTDOWN 1..10 and TASK_DESCRIPTION = true work as before.
+3. custom.lua changed (PREP_COUNTDOWN range 0..10, new launch handling): when upgrading, set it again starting from the new file.
+4. Unit tests: start at the first launch for Task A, M and QT.
 
 ### Version 3.04.02
 1. The configuration page and the task log viewer are no longer included in the `config` folder: they are now hosted on https://rcglideranalytics.com/F3kTraining/Configurator and https://rcglideranalytics.com/F3kTraining/TaskLog.

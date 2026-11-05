@@ -42,7 +42,8 @@ local taskBase = {
 	wellDone = false,
 
 	countdownStart = 10,	-- countdown start in use (COUNTDOWN_START or F3KConfig.PREP_COUNTDOWN)
-	lastCountdown = 0	-- last prep time second announced
+	lastCountdown = 0,	-- last prep time second announced
+	launchStart = false	-- PREP_COUNTDOWN = 0 : no prep time, the task starts at the first launch
 }
 
 	-- Some common stuff
@@ -82,15 +83,21 @@ function taskBase.initPrepTimer()
 	-- The prep countdown is announced by the script (see prepCountdown), not by the radio,
 	-- so that it doesn't get queued behind the task description
 	local prepTime
+	taskBase.launchStart = false
 	if F3KConfig.TASK_DESCRIPTION then
 		taskBase.countdownStart = taskBase.COUNTDOWN_START
 		prepTime = taskBase.PREP_TIME
 	else
-		-- user defined short prep time (custom.lua), limited to 1..COUNTDOWN_START
+		-- user defined short prep time (custom.lua), limited to 0..COUNTDOWN_START
 		local cd = tonumber( F3KConfig.PREP_COUNTDOWN ) or taskBase.COUNTDOWN_START
-		cd = math.max( 1, math.min( taskBase.COUNTDOWN_START, math.floor( cd ) ) )
+		cd = math.max( 0, math.min( taskBase.COUNTDOWN_START, math.floor( cd ) ) )
 		taskBase.countdownStart = cd
 		prepTime = cd
+		if cd == 0 then
+			-- no prep time: timer1 is already the working time, started by the first launch
+			taskBase.launchStart = true
+			prepTime = taskBase.WINDOW_TIME
+		end
 	end
 	taskBase.timer1 = createTimer( 0, prepTime, 0, false )
 	taskBase.lastCountdown = taskBase.countdownStart + 1
@@ -173,8 +180,10 @@ function taskBase.resetState()
 
 		taskBase.initPrepTimer()
 		taskBase.initFlightTimer()
-		taskBase.timer1.start()
-		taskBase.prepCountdown()
+		if not taskBase.launchStart then
+			taskBase.timer1.start()
+			taskBase.prepCountdown()
+		end
 
 		taskBase.state = 2
 	elseif getValue( Options.MenuSwitch ) < 0 then
@@ -185,7 +194,15 @@ end
 
 function taskBase.startedState()
 	if not taskBase.earlyReset() then
-		if taskBase.timer1.getVal() <= 0 then
+		if taskBase.launchStart then
+			-- No prep time: the first launch starts the working time and the first flight
+			if F3KConfig.launched() then
+				taskBase.timer1.start()		-- working time
+				taskBase.state = 4
+				F3KConfig.forceLaunch()
+				taskBase.landedState()		-- the task's own launch handling (flight timer, count, ...)
+			end
+		elseif taskBase.timer1.getVal() <= 0 then
 			taskBase.timer1 = createTimer( 0, taskBase.WINDOW_TIME, 0, false )	-- working time
 			taskBase.timer1.start()
 

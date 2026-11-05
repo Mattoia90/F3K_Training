@@ -28,7 +28,9 @@ local SOUND_PATH = F3K_SCRIPT_PATH .. 'sounds/'
 local TASK_DESCRIPTION = true
 
 -- Prep time countdown (seconds) used when TASK_DESCRIPTION = false
--- e.g. 10 (default) or 5 for a faster start; valid range 1..10
+-- e.g. 10 (default) or 5 for a faster start; valid range 0..10
+--   0 : no countdown, the task waits and starts at the first launch
+--       (hold the prelaunch switch > 0.6s and release it: working time and first flight start together)
 local PREP_COUNTDOWN = 10
 
 -- Task history log
@@ -42,15 +44,24 @@ local TASK_LOG = false
 
 
 local lastTimeLanded = 0	-- 0=must pull first ; other=time of the last pull
+local forcedLaunch = false	-- next launched() call returns true (task started by the first launch)
 
 local function resetLaunchDetection()
 	lastTimeLanded = 0
+end
+
+local function forceLaunch()
+	forcedLaunch = true
 end
 
 
 
 -- >>> Launch / Land detection <<< ---
 local function launched()
+	if forcedLaunch then
+		forcedLaunch = false
+		return true
+	end
 	local ret = false
 	if getValue( Options.PrelaunchSwitch ) < 0 then
 		-- if the tmp switch is held for more than 0.6s, it's a launch ;
@@ -122,6 +133,7 @@ return {
 	TASK_LOG = TASK_LOG,
 
 	resetLaunchDetection = resetLaunchDetection,
+	forceLaunch = forceLaunch,
 	launched = launched,
 	landed = landed
 }

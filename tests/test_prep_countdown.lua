@@ -85,6 +85,51 @@ local function test_no_prep_task(idx, name)
   helper.assert_eq(count_sounds("file"), 0, name .. ": description not played when disabled")
 end
 
+-- PREP_COUNTDOWN = 0 : no prep time, the first launch starts the working time and the first flight
+local function test_launch_start(idx, name, window, maxFlight)
+  print("- Testing start at first launch (PREP_COUNTDOWN=0): " .. name)
+  local script = load_task(idx, false, 0)
+  local started = 0
+  for _, e in ipairs(mock_env.timerEvents) do
+    if e.type == "start" then started = started + 1 end
+  end
+  helper.assert_eq(started, 0, name .. ": no timer started before the launch")
+  helper.assert_eq(count_sounds("number"), 0, name .. ": no countdown announced")
+  run_prep(script, 20)
+  helper.assert_eq(mock_env.taskState.state, 2, name .. ": waiting for the launch")
+  helper.assert_eq(count_sounds("number"), 0, name .. ": still no countdown")
+
+  -- quick pull of the prelaunch switch: ignored
+  mock_env.setSwitch("se", 1024)
+  script.run()
+  mock_env.setSwitch("se", -1024)
+  script.run()
+  helper.assert_eq(mock_env.taskState.state, 2, name .. ": quick pull ignored")
+
+  -- launch: hold > 0.6s then release
+  mock_env.clearTimerEvents()
+  mock_env.setSwitch("se", 1024)
+  mock_env.advanceTime(1)
+  script.run()
+  mock_env.setSwitch("se", -1024)
+  mock_env.advanceTime(1)
+  script.run()
+  helper.assert_timer_started(0, window, name .. ": working time started at the launch")
+  helper.assert_timer_started(1, maxFlight, name .. ": first flight started at the launch")
+  helper.assert_eq(mock_env.taskState.state, 3, name .. ": flying")
+  helper.assert_eq(mock_env.taskState.flightCount, 1, name .. ": first flight counted")
+
+  -- landing
+  mock_env.advanceTime(30)
+  script.run()
+  mock_env.setSwitch("se", 1024)
+  script.run()
+  mock_env.setSwitch("se", -1024)
+  script.run()
+  helper.assert_eq(mock_env.taskState.state, 4, name .. ": landed")
+  helper.assert_eq(mock_env.taskState.times.getTotal() > 0, true, name .. ": flight time recorded")
+end
+
 test_with_description(1, "Task A", 16)
 test_without_description(1, "Task A", 10)
 test_without_description(1, "Task A", 5)
@@ -92,6 +137,9 @@ test_without_description(1, "Task A", 30, 10)	-- out of range: limited to 10
 test_with_description(12, "Task M", 20)
 test_without_description(12, "Task M", 10)
 test_without_description(12, "Task M", 5)
+test_launch_start(1, "Task A", 600, 300)
+test_launch_start(12, "Task M", 900, 180)
+test_launch_start(17, "Task QT", 600, 45)
 test_no_prep_task(3, "Task C")
 test_no_prep_task(18, "Free Flight")
 
