@@ -2,7 +2,7 @@ local helper = require("tests.test_helper")
 
 local function test_task_qt_practice()
   print("- Testing Task QT (QT Practice)")
-  local script = helper.select_and_load_task(17) -- Index 17: QT Practice
+  local script = helper.select_and_load_task(19) -- Index 19: QT Practice
   helper.assert_eq(mock_env.taskState.name, "QT practice", "Task QT name matches")
 
   helper.assert_timer_started(0, 16, "Prep timer starts with 16s")

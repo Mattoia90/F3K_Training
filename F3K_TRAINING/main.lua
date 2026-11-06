@@ -1,4 +1,4 @@
-F3KVersion = '3.04.04'
+F3KVersion = '3.04.05'
 --[[
 	F3K Training - 	Mike, ON4MJ
 
@@ -154,6 +154,8 @@ createMenu = function()
 		{ id='A', desc='Last flight (7 min)', win=7 },
 		{ id='B', desc='Last two (7 min)', win=7 },
 		{ id='D2', desc='Small Ladder'},
+		{ id='E', desc='Poker (10 min)', win=10 },
+		{ id='EE', desc='Poker (15 min)', win=15 },
 		{ id='QT', desc='QT practice (13x45s)'},
 		{ id='FF', desc='Free flight' }
 	}

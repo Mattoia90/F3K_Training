@@ -2,7 +2,7 @@ local helper = require("tests.test_helper")
 
 local function test_task_ff_free_flight()
   print("- Testing Task FF (Free Flight)")
-  local script = helper.select_and_load_task(18) -- Index 18: Free Flight
+  local script = helper.select_and_load_task(20) -- Index 20: Free Flight
   helper.assert_eq(mock_env.taskState.name, "Free Flight", "Task FF name matches")
 
   -- In Free Flight, the transition from state 2 (started) to state 4 (landed) is automatic

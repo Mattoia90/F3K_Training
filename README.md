@@ -1,7 +1,7 @@
 # F3K TRAINING
 
 Actual version: 
-#### 3.04.04
+#### 3.04.05
 
 Original project on: https://www.rcgroups.com/forums/showthread.php?2298914-F3K-training-script-for-the-Taranis-Q-and-Horus/page22
 
@@ -28,6 +28,22 @@ With TASK_DESCRIPTION = false and PREP_COUNTDOWN = 0 there is no prep time and n
 3. A quick pull of the prelaunch switch while waiting is ignored.
 
 Task C (AULD) and Free Flight have no prep time and are not affected.
+
+## TASK E - POKER (E = 10 min, EE = 15 min)
+Up to 3 target times, each announced before the launch. You can launch as many times as you need to reach or exceed the announced target, and it can't be changed until it has been reached. The last call can be "end of working time" (W), which gets one attempt only. The score is the sum of the reached targets.
+
+The target is chosen with the menu scroll input (MENU_SCROLL_ENCODER, the throttle by default):
+1. At the start of the task, and after landing a flight that reached its target, the target is **W** (all the remaining working time), whatever the stick position.
+2. Move the stick to choose another target: stick up = longer. The value is a share of the remaining working time, in 10 s steps; stick fully up = W. You can already choose the first target during the prep time (or, with PREP_COUNTDOWN = 0, before the first launch).
+3. Launch: the target is locked and announced ("target 2 minutes 30", or "end of working time"), and the flight timer counts down from it with the voice countdown.
+4. Target reached in the air: "well done", and the target is credited. After the landing you can choose the next one.
+5. Target not reached: it stays locked (the screen shows "Lock") and the stick is ignored until it is reached. "Sorry, but you can't improve anymore" is played at the launch if the locked target is longer than the remaining working time.
+6. W: credited with the flight time up to the end of the working time; if you land before the end, the task ends with no score for it.
+
+The task ends after 3 reached targets or at the end of the working time.
+
+
+The task log records the flight times of Poker, not the announced targets; the TaskLog page doesn't score Poker yet.
 
 ## TASK HISTORY LOG
 In the same Custom.lua file, set local TASK_LOG = true to keep a history of the tasks flown.
@@ -65,6 +81,10 @@ Only those six values are changed; the rest of custom.lua is kept as it is. The 
 ## HOW TO SET F3K TRAINING
 Select in the radio the F3K model, go to model setting on section "DISPLAY", in a one empty screen select "script" and then select "f3k.lua".
 Now you can go in the corresponding page of the telemetry, select your task, toggle the sc switch and play with f3k training!!
+
+### Version 3.04.05
+1. New Task E Poker (10 min working time) and EE Poker (15 min working time), at the end of the task list: the target is chosen with the menu scroll input, see "TASK E - POKER".
+2. Updated some audio file.
 
 ### Version 3.04.04
 1. New PREP_COUNTDOWN = 0 option (with TASK_DESCRIPTION = false): no prep time and no countdown, the task waits and the first launch with the prelaunch switch (held more than 0.6 s, then released) starts the working time and the first flight together. A quick pull while waiting is ignored. See "Start at the first launch (PREP_COUNTDOWN = 0)".

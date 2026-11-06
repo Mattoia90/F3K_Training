@@ -22,6 +22,7 @@ dofile("tests/test_task_l.lua")
 dofile("tests/test_task_m.lua")
 dofile("tests/test_task_n.lua")
 dofile("tests/test_task_qt.lua")
+dofile("tests/test_task_e.lua")
 dofile("tests/test_prep_countdown.lua")
 dofile("tests/test_tasklog.lua")
 
