@@ -9,7 +9,7 @@ local function load_task(idx, description, countdown)
   mock_env.setSwitch("sc", -1024)
   mock_env.setSwitch("se", -1024)
 
-  local num_tasks = 18
+  local num_tasks = 20
   local thr_val = math.floor(1024 - ((idx - 1) + 0.5) * (2049 / num_tasks))
   mock_env.setSwitch("thr", thr_val)
 
@@ -139,9 +139,9 @@ test_without_description(12, "Task M", 10)
 test_without_description(12, "Task M", 5)
 test_launch_start(1, "Task A", 600, 300)
 test_launch_start(12, "Task M", 900, 180)
-test_launch_start(17, "Task QT", 600, 45)
+test_launch_start(19, "Task QT", 600, 45)
 test_no_prep_task(3, "Task C")
-test_no_prep_task(18, "Free Flight")
+test_no_prep_task(20, "Free Flight")
 
 -- restore the default for any following test
 F3KConfig.TASK_DESCRIPTION = true
