@@ -191,6 +191,11 @@ function dofile(path)
     result = original_dofile(local_path)
   end
 
+  -- Tests drive sc / se / thr, whatever switches are saved in custom.lua (Configurator / f3kcfg tool)
+  if local_path:match("custom%.lua$") then
+    result.MENU_SWITCH, result.PRELAUNCH_SWITCH, result.MENU_SCROLL_ENCODER = "sc", "se", "thr"
+  end
+
   if local_path:match("timer%.lua$") then
     local original_createTimer = result
     result = function(timerId, startValue, countdownBeep, minuteBeep)
