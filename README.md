@@ -97,7 +97,8 @@ Now you can go in the corresponding page of the telemetry, select your task, tog
 3. Task log: new Heights column before the flights (`Date;Time;Task;Window;Status;Heights;Flights`), launch heights in meters separated by spaces, empty without altitude sensor.
 4. custom.lua changed (HEIGHT now starts with `Alt`, new LAUNCH_HEIGHT_VOICE): when upgrading, set it again starting from the new file.
 5. New F3K Config radio tool (F3K_TRAINING/f3kcfg.lua, run it from the SD card browser): change the custom.lua settings on the radio at the field.
-6. Color radios (EdgeTX widget, full screen zone): TX16S / Horus (480x272) and TX15 / GX15 (480x320) use the same widget views. New Task K (Big Ladder) and L (One flight) widget views, which crashed the widget before; Task M widget view fixed for the 3 / 5 / 7 min targets.
+6. F3K Config: fixed "not enough memory" on SAVE (the file is now written in pieces, without whole copies in memory).
+7. Color radios (EdgeTX widget, full screen zone): TX16S / Horus (480x272) and TX15 / GX15 (480x320) use the same widget views. New Task K (Big Ladder) and L (One flight) widget views, which crashed the widget before; Task M widget view fixed for the 3 / 5 / 7 min targets.
 
 ### Version 3.04.05
 1. New Task E Poker (10 min working time) and EE Poker (15 min working time), at the end of the task list: the target is chosen with the menu scroll input, see "TASK E - POKER".

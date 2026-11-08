@@ -39,9 +39,10 @@ local PARAMS = {
 -- Same rule as the Configurator: first uncommented "local NAME = 'x' | "x" | true | false | 123" line
 local VALUE_PATTERNS = { "^'[^'\r\n]*'", '^"[^"\r\n]*"', '^true', '^false', '^%-?%d+' }
 
--- text must start with "\n" so that a match on the first line is a line start too
 local function locate( text, name )
-	local _, e = string.find( text, '\n[ \t]*local[ \t]+' .. name .. '[ \t]*=[ \t]*' )
+	local decl = '[ \t]*local[ \t]+' .. name .. '[ \t]*=[ \t]*'
+	local _, e = string.find( text, '^' .. decl )
+	if not e then _, e = string.find( text, '\n' .. decl ) end
 	if not e then return nil end
 	for _, pat in ipairs( VALUE_PATTERNS ) do
 		local s2, e2 = string.find( text, pat, e + 1 )
@@ -60,7 +61,6 @@ end
 
 -- Returns values, quotes ; or nil, name of the first missing mandatory setting
 local function parse( text )
-	text = '\n' .. text
 	local values, quotes = {}, {}
 	for _, p in ipairs( PARAMS ) do
 		local s, e = locate( text, p.name )
@@ -73,8 +73,10 @@ local function parse( text )
 	return values, quotes
 end
 
-local function build( text, values, quotes )
-	text = '\n' .. text
+-- Calls put() with the pieces of the new file, in order. The file is never copied as a whole:
+-- on the radio the pieces go straight to the SD card (whole-file copies ran out of Lua memory)
+local function emit( text, values, quotes, put )
+	local edits = {}	-- { s, e, v } sorted by position (no 'table' library: insertion by hand)
 	for _, p in ipairs( PARAMS ) do
 		local s, e = locate( text, p.name )
 		local v = values[ p.name ]
@@ -83,10 +85,27 @@ local function build( text, values, quotes )
 				local q = quotes[ p.name ] or "'"
 				v = q .. v .. q
 			end
-			text = string.sub( text, 1, s - 1 ) .. tostring( v ) .. string.sub( text, e + 1 )
+			local i = #edits
+			while i > 0 and edits[ i ].s > s do
+				edits[ i + 1 ] = edits[ i ]
+				i = i - 1
+			end
+			edits[ i + 1 ] = { s = s, e = e, v = tostring( v ) }
 		end
 	end
-	return string.sub( text, 2 )
+	local pos = 1
+	for _, ed in ipairs( edits ) do
+		put( string.sub( text, pos, ed.s - 1 ) )
+		put( ed.v )
+		pos = ed.e + 1
+	end
+	put( string.sub( text, pos ) )
+end
+
+local function build( text, values, quotes )
+	local out = ''
+	emit( text, values, quotes, function( s ) out = out .. s end )
+	return out
 end
 
 local function readAll( path )
@@ -167,8 +186,10 @@ local function init()
 		if p.kind == 'src' then
 			st.lists[ p.name ] = sourceList( p.groups, st.values[ p.name ] )
 			st.ids[ p.name ] = controlIds( st.lists[ p.name ] )
+			p.groups = nil	-- candidate names no longer needed: free the memory
 		end
 	end
+	collectgarbage()
 end
 
 local function set( p, v )
@@ -210,14 +231,27 @@ local function pickMoved( p )
 end
 
 local function save()
-	local out = build( st.text, st.values, st.quotes )
 	-- keep the previous file: a failed write would leave the training script without settings
 	local bak = string.gsub( st.path, '%.lua$', '.bak' )
-	if not writeAll( bak, st.text ) or not writeAll( st.path, out ) or readAll( st.path ) ~= out then
-		st.msg = 'Write error! See custom.bak'
+	local ok = writeAll( bak, st.text )
+	local f = ok and io.open( st.path, 'w' )
+	if f then
+		emit( st.text, st.values, st.quotes, function( s ) io.write( f, s ) end )
+		io.close( f )
+	end
+
+	-- check by reading the file back, with only that copy in memory
+	st.text = nil
+	collectgarbage()
+	st.text = f and readAll( st.path )
+	local back = st.text and parse( st.text )
+	for _, p in ipairs( PARAMS ) do
+		if back and st.values[ p.name ] ~= nil and back[ p.name ] ~= st.values[ p.name ] then back = nil end
+	end
+	if not back then
+		st.err = 'Write error! See custom.bak'
 		return
 	end
-	st.text = out
 	st.dirty = false
 	st.msg = 'Saved'
 end
