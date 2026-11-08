@@ -177,9 +177,12 @@ local function test_cant()
   helper.assert_eq(task().selected, 540, "90% of 600s")
   helper.simulate_flight(script, 100)
   mock_env.clearSounds()
+  local flights = task().flightCount
   helper.simulate_flight(script, 10)
   helper.assert_sound_played("cant%.wav", "Can't reach the locked target anymore")
   helper.assert_eq(count_files("welldone"), 0, "No well done")
+  helper.assert_eq(task().flightCount, flights, "No flight started for an unreachable locked target")
+  helper.assert_eq(task().state, 4, "Still landed")
 end
 
 
@@ -197,7 +200,39 @@ local function test_task_ee()
 end
 
 
+local function test_target_while_stopped()
+  print("- Testing Task E: target chosen while stopped (menu switch mid), kept at the start")
+  local script = helper.select_and_load_task(17)
+  mock_env.setSwitch("sc", 0)		-- stop: back to state 1
+  run(script, 1)
+  helper.assert_eq(task().state, 1, "Stopped")
+  mock_env.setSwitch("thr", THR_HALF)
+  run(script, 1)
+  helper.assert_eq(task().selW, false, "Moving the stick while stopped leaves the W default")
+  helper.assert_eq(task().selected, 300, "50% of 600s while stopped")
+
+  mock_env.setSwitch("sc", 1024)	-- run
+  run(script, 1)
+  helper.assert_eq(task().state, 2, "Started")
+  helper.assert_eq(task().selected, 300, "Selection kept at the start")
+end
+
+
+local function test_target_longer_than_remaining_is_w()
+  print("- Testing Task E: a target longer than the remaining working time becomes W")
+  local script = load_and_start(17)
+  mock_env.setSwitch("thr", THR_BOTTOM)
+  run(script)
+  helper.assert_eq(task().selected, 10, "Stick at the bottom = 10s")
+  run(script, 595)	-- 5s left: the 10s minimum can't be flown anymore
+  helper.assert_eq(task().selW, true, "W when the target exceeds the remaining time")
+  helper.assert_eq(task().selected, 5, "W = the remaining time")
+end
+
+
 test_default_is_w()
+test_target_longer_than_remaining_is_w()
+test_target_while_stopped()
 test_target_in_prep_time()
 test_launch_start()
 test_lock_and_three_targets()

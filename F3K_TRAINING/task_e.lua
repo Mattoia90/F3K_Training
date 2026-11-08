@@ -79,7 +79,7 @@ local function endTask()
 end
 
 
-function taskE.select( remaining )
+function taskE.chooseTarget( remaining )
 	if taskE.locked then
 		return
 	end
@@ -89,15 +89,11 @@ function taskE.select( remaining )
 	end
 
 	local f = math.max( 0, math.min( 1, (pos + 1024) / 2048 ) )
-	if not taskE.adjusting or f >= taskE.W_ZONE then
-		taskE.selW = true
-		taskE.selected = remaining
-	else
-		-- the scale follows the remaining time, rounded up to 10s: stable for 10s at a time
-		local scale = math.ceil( remaining / 10 ) * 10
-		taskE.selW = false
-		taskE.selected = math.max( 10, math.floor( f * scale / 10 ) * 10 )
-	end
+	-- the scale follows the remaining time, rounded up to 10s: stable for 10s at a time
+	local target = math.max( 10, math.floor( f * math.ceil( remaining / 10 ) ) * 10 )
+	-- a target longer than the remaining working time can't be flown: W instead
+	taskE.selW = not taskE.adjusting or f >= taskE.W_ZONE or target > remaining
+	taskE.selected = taskE.selW and remaining or target
 end
 
 
@@ -139,9 +135,10 @@ end
 local baseResetState = taskE.resetState
 function taskE.resetState()
 	baseResetState()
-	if taskE.state == 2 then
-		clearState()
-		taskE.selected = taskE.WINDOW_TIME
+	-- The target can already be chosen while stopped; it is kept at the start
+	-- (clearState already ran at init / on the reset that brought us here)
+	if taskE.state == 1 then
+		taskE.chooseTarget( taskE.WINDOW_TIME )
 	end
 end
 
@@ -149,7 +146,7 @@ end
 local baseStartedState = taskE.startedState
 function taskE.startedState()
 	-- The first target can be chosen during the prep time (or while waiting for the first launch)
-	taskE.select( taskE.WINDOW_TIME )
+	taskE.chooseTarget( taskE.WINDOW_TIME )
 	baseStartedState()
 end
 
@@ -157,9 +154,13 @@ end
 function taskE.landedState()
 	if not taskE.endOfWindow() and not taskE.earlyReset() then
 		local remaining = taskE.timer1.getVal()
-		taskE.select( remaining )
+		taskE.chooseTarget( remaining )
 
-		if F3KConfig.launched() then
+		local launch = F3KConfig.launched()	-- once per tick: launched() consumes the detection
+		if launch and taskE.locked and taskE.locked > remaining then
+			-- the locked target can't be reached anymore: no flight countdown
+			taskE.playSound( 'cant' )
+		elseif launch then
 			if not taskE.locked then
 				taskE.lockedW = taskE.selW
 				taskE.locked = taskE.selW and remaining or taskE.selected
@@ -174,9 +175,6 @@ function taskE.landedState()
 			else
 				taskE.playSound( 'target' )
 				playTime( taskE.locked )
-				if taskE.locked > remaining then
-					taskE.playSound( 'cant' )
-				end
 			end
 		end
 	end
