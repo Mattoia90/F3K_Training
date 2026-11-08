@@ -172,6 +172,8 @@ createMenu = function()
 			lcd.drawText( lcd.getLastPos(), 54, F3KVersion, 0 )
 			taskPath = '/SCRIPTS/F3K_TRAINING/X9/view_'
 		else
+			-- drawn after the menu, inverted: stays readable on top of the last row (no RIGHT: unsupported before OpenTX 2.2)
+			lcd.drawText( LCD_W - 39, 58, 'v' .. F3KVersion, SMLSIZE + INVERS )	-- ends at the right edge (measured on the X7)
 			taskPath = '/SCRIPTS/F3K_TRAINING/X7/view_'
 		end
 		--if the switch is set start the current task
