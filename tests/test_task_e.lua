@@ -175,14 +175,17 @@ local function test_cant()
   mock_env.setSwitch("thr", 820)	-- ~90%: 540s
   run(script)
   helper.assert_eq(task().selected, 540, "90% of 600s")
-  helper.simulate_flight(script, 100)
   mock_env.clearSounds()
+  helper.simulate_flight(script, 100)	-- lands with 540s locked and less than that left
+  helper.assert_sound_played("cant%.wav", "Can't reach the locked target anymore")
+  helper.assert_sound_played("taskend%.wav", "Task ended")
+  helper.assert_eq(count_files("welldone"), 0, "No well done")
+  helper.assert_eq(task().state, 5, "Task done: nothing left to score")
+  helper.assert_eq(task().done, true, "Done ! shown")
+
   local flights = task().flightCount
   helper.simulate_flight(script, 10)
-  helper.assert_sound_played("cant%.wav", "Can't reach the locked target anymore")
-  helper.assert_eq(count_files("welldone"), 0, "No well done")
-  helper.assert_eq(task().flightCount, flights, "No flight started for an unreachable locked target")
-  helper.assert_eq(task().state, 4, "Still landed")
+  helper.assert_eq(task().flightCount, flights, "No flight after the end")
 end
 
 

@@ -6,6 +6,7 @@
 
 	Up to 3 target times, announced before the launch. Unlimited launches to reach or exceed
 	the announced target; it can't be changed until it has been reached (strict lock).
+	When the remaining working time gets shorter than a locked target, the task ends (Done !).
 	The last call may be "end of working time" (W): one attempt only.
 	Score = sum of the reached targets.
 
@@ -156,11 +157,11 @@ function taskE.landedState()
 		local remaining = taskE.timer1.getVal()
 		taskE.chooseTarget( remaining )
 
-		local launch = F3KConfig.launched()	-- once per tick: launched() consumes the detection
-		if launch and taskE.locked and taskE.locked > remaining then
-			-- the locked target can't be reached anymore: no flight countdown
+		if taskE.locked and taskE.locked > remaining then
+			-- the locked target can't be reached anymore: nothing left to score
 			taskE.playSound( 'cant' )
-		elseif launch then
+			endTask()
+		elseif F3KConfig.launched() then
 			if not taskE.locked then
 				taskE.lockedW = taskE.selW
 				taskE.locked = taskE.selW and remaining or taskE.selected
