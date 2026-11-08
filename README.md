@@ -1,7 +1,7 @@
 # F3K TRAINING
 
 Actual version: 
-#### 3.04.05
+#### 3.04.06
 
 Original project on: https://www.rcgroups.com/forums/showthread.php?2298914-F3K-training-script-for-the-Taranis-Q-and-Horus/page22
 
@@ -91,7 +91,7 @@ The tool edits SCRIPTS\F3K_TRAINING\custom.lua (or WIDGETS\F3K_TRAINING\custom.l
 Select in the radio the F3K model, go to model setting on section "DISPLAY", in a one empty screen select "script" and then select "f3k.lua".
 Now you can go in the corresponding page of the telemetry, select your task, toggle the sc switch and play with f3k training!!
 
-### Next version (unreleased)
+### Version 3.04.06
 1. Launch height: with an altitude sensor (`Alt` from a vario / ELRS baro, `GAlt` or `Valt`; see HEIGHT in custom.lua) the height of every launch is measured (peak altitude minus the altitude at the launch, until the peak is passed, 10 s or the landing), announced in meters and shown on screen (X7: `L:` when not flying, live `A:` while flying; X9: `L:` top right; Horus: below the main timer).
 2. New LAUNCH_HEIGHT_VOICE option in custom.lua (default true): set it to false to keep the launch height on screen and in the log without the voice announcement.
 3. Task log: new Heights column before the flights (`Date;Time;Task;Window;Status;Heights;Flights`), launch heights in meters separated by spaces, empty without altitude sensor.
