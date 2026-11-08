@@ -82,7 +82,7 @@ Only those seven values are changed; the rest of custom.lua is kept as it is. Th
 At the field you can change the same seven values directly on the radio, without a computer.
 1. The tool is f3kcfg.lua inside the F3K_TRAINING folder, so it is already on the SD card ('SDVolume':\SCRIPTS\F3K_TRAINING\f3kcfg.lua).
 2. Open the radio SD card browser, go to SCRIPTS/F3K_TRAINING, long press f3kcfg.lua > Execute. Optional: also copy it to 'SDVolume':\SCRIPTS\TOOLS to start "F3K Config" from the radio Tools menu.
-3. Scroll to a setting and press ENTER: ON/OFF settings toggle, the others enter edit mode (scroll to change, ENTER/EXIT to confirm). Only the switches / inputs existing on your radio are listed.
+3. Scroll to a setting and press ENTER: ON/OFF settings toggle, the others enter edit mode (scroll to change, ENTER/EXIT to confirm). Only the switches / inputs existing on your radio are listed. For the switches and the menu scroll input you can also just move the control you want (switch, stick, pot, slider) while editing: it is selected automatically, as in the radio's own menus.
 4. Select SAVE and press ENTER, then EXIT. The settings are read again when the telemetry script restarts after the tool. If they are not applied, restart the radio.
 
 The tool edits SCRIPTS\F3K_TRAINING\custom.lua (or WIDGETS\F3K_TRAINING\custom.lua on Horus) in the same way as the Configurator, and keeps the previous file as custom.bak. On Horus widgets the switches set in the widget settings take precedence over custom.lua.
@@ -97,6 +97,7 @@ Now you can go in the corresponding page of the telemetry, select your task, tog
 3. Task log: new Heights column before the flights (`Date;Time;Task;Window;Status;Heights;Flights`), launch heights in meters separated by spaces, empty without altitude sensor.
 4. custom.lua changed (HEIGHT now starts with `Alt`, new LAUNCH_HEIGHT_VOICE): when upgrading, set it again starting from the new file.
 5. New F3K Config radio tool (F3K_TRAINING/f3kcfg.lua, run it from the SD card browser): change the custom.lua settings on the radio at the field.
+6. Color radios (EdgeTX widget, full screen zone): TX16S / Horus (480x272) and TX15 / GX15 (480x320) use the same widget views. New Task K (Big Ladder) and L (One flight) widget views, which crashed the widget before; Task M widget view fixed for the 3 / 5 / 7 min targets.
 
 ### Version 3.04.05
 1. New Task E Poker (10 min working time) and EE Poker (15 min working time), at the end of the task list: the target is chosen with the menu scroll input, see "TASK E - POKER".

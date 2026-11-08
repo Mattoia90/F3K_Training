@@ -21,14 +21,14 @@ function task.display( context )
 	end
 
 	local total = 0
-	for i=0,4 do
+	for i=0,2 do
 		local y = 10 + 21 * i
-		local max = 60 + 30 * i
-		OpenTX.lcd.drawNumber( 318, y, max, RIGHT )
-		OpenTX.lcd.drawText( 318, y, 's', 0 )
+		local max = 180 + 120 * i
+		OpenTX.lcd.drawNumber( 318, y, 3 + 2 * i, RIGHT )	-- 3, 5, 7 min
+		OpenTX.lcd.drawText( 318, y, 'm', 0 )
 
 		if i < task.current - 1 then
-			local val = task.times.getVal( 7 - task.current + i )
+			local val = task.times.getVal( 5 - task.current + i )
 			OpenTX.lcd.drawTimer( 338, y, val, 0 )
 			total = total + math.min( max, val )
 		end

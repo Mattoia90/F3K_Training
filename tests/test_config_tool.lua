@@ -80,17 +80,33 @@ local function test_ui_save()
   tool.run(0)
   tool.run(EVT_VIRTUAL_ENTER)   -- edit Prelaunch (se)
   tool.run(EVT_VIRTUAL_NEXT)    -- next existing source: sf
+  mock_env.setSwitch("sh", -1024)
+  tool.run(0)                   -- moved to select: sh
+  local thr = getValue("thr")
+  mock_env.setSwitch("thr", thr > 0 and -1024 or 1024)  -- a stick is not in the prelaunch list
+  mock_env.setSwitch("ls1", 1024)             -- logical switches are not "moved"
+  tool.run(0)
   tool.run(EVT_VIRTUAL_ENTER)   -- done
   tool.run(EVT_VIRTUAL_NEXT); tool.run(EVT_VIRTUAL_NEXT); tool.run(EVT_VIRTUAL_NEXT)
   tool.run(EVT_VIRTUAL_ENTER)   -- Task description toggled off
+  tool.run(EVT_VIRTUAL_PREV)
+  tool.run(EVT_VIRTUAL_ENTER)   -- edit Menu scroll
+  mock_env.setSwitch("ele", 600)
+  tool.run(0)                   -- moved to select: ele
+  tool.run(EVT_VIRTUAL_ENTER)
+  mock_env.setSwitch("ele", nil)
+  mock_env.setSwitch("thr", thr)
   helper.assert_eq(tool.run(EVT_VIRTUAL_EXIT), 0, "First EXIT with unsaved changes only warns")
   for _ = 1, 10 do tool.run(EVT_VIRTUAL_NEXT) end   -- clamps on SAVE
   tool.run(EVT_VIRTUAL_ENTER)
   io = real_io
 
   local v = tool.parse(files["/SCRIPTS/F3K_TRAINING/custom.lua"])
-  helper.assert_eq(v.PRELAUNCH_SWITCH, "sf", "Prelaunch saved")
+  mock_env.setSwitch("sh", nil)
+  mock_env.setSwitch("ls1", nil)
+  helper.assert_eq(v.PRELAUNCH_SWITCH, "sh", "Prelaunch saved (switch moved, stick / logical switch ignored)")
   helper.assert_eq(v.TASK_DESCRIPTION, false, "Task description saved")
+  helper.assert_eq(v.MENU_SCROLL_ENCODER, "ele", "Scroll input saved (stick moved)")
   helper.assert_eq(v.MENU_SWITCH, "sc", "Other values untouched")
   helper.assert_eq(files["/SCRIPTS/F3K_TRAINING/custom.bak"], start, "Backup of the previous file")
   helper.assert_eq(tool.run(EVT_VIRTUAL_EXIT), 1, "EXIT after save quits")
