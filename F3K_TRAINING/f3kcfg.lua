@@ -131,11 +131,24 @@ local function sourceList( groups, current )
 end
 
 
+-- Field ids of the controls that can be "moved to select" (logical switches change by themselves: skipped)
+local function controlIds( list )
+	local ids = {}
+	for i, name in ipairs( list ) do
+		local info = not string.find( name, '^ls%d' ) and getFieldInfo( name )
+		if info then ids[ i ] = info.id end
+	end
+	return ids
+end
+
+local MOVE_THRESHOLD = 300	-- of -1024..1024: a switch flip or a clear stick / pot move, not noise
+
+
 -- >>> UI <<< --
-local st = {}		-- path, text, values, quotes, lists, sel, top, editing, dirty, warned, msg, err
+local st = {}		-- path, text, values, quotes, lists, ids, base, sel, top, editing, dirty, warned, msg, err
 
 local function init()
-	st = { sel = 1, top = 1, editing = false, dirty = false, warned = false, msg = nil, lists = {} }
+	st = { sel = 1, top = 1, editing = false, dirty = false, warned = false, msg = nil, lists = {}, ids = {} }
 	for _, path in ipairs( FILES ) do
 		st.text = readAll( path )
 		if st.text then st.path = path break end
@@ -151,28 +164,49 @@ local function init()
 	end
 	st.values, st.quotes = values, quotesOrMissing
 	for _, p in ipairs( PARAMS ) do
-		if p.kind == 'src' then st.lists[ p.name ] = sourceList( p.groups, st.values[ p.name ] ) end
+		if p.kind == 'src' then
+			st.lists[ p.name ] = sourceList( p.groups, st.values[ p.name ] )
+			st.ids[ p.name ] = controlIds( st.lists[ p.name ] )
+		end
 	end
+end
+
+local function set( p, v )
+	st.values[ p.name ] = v
+	st.dirty = true
+	st.warned = false
 end
 
 local function change( p, dir )
 	local v = st.values[ p.name ]
 	if p.kind == 'bool' then
-		st.values[ p.name ] = not v
+		set( p, not v )
 	elseif p.kind == 'int' then
-		st.values[ p.name ] = math.max( p.min, math.min( p.max, v + dir ) )
+		set( p, math.max( p.min, math.min( p.max, v + dir ) ) )
 	else
 		local list = st.lists[ p.name ]
 		local idx = 1
 		for i, name in ipairs( list ) do
 			if name == v then idx = i end
 		end
-		idx = ( idx - 1 + dir ) % #list + 1
-		st.values[ p.name ] = list[ idx ]
+		set( p, list[ ( idx - 1 + dir ) % #list + 1 ] )
 	end
-	st.dirty = true
-	st.warned = false
-	st.msg = nil
+end
+
+-- Remembers the position of every control of the list: the first one moved away from it is selected
+local function snapshot( p )
+	st.base = {}
+	for i, id in pairs( st.ids[ p.name ] ) do st.base[ i ] = getValue( id ) or 0 end
+end
+
+local function pickMoved( p )
+	for i, id in pairs( st.ids[ p.name ] ) do
+		if math.abs( ( getValue( id ) or 0 ) - st.base[ i ] ) > MOVE_THRESHOLD then
+			set( p, st.lists[ p.name ][ i ] )
+			snapshot( p )
+			return
+		end
+	end
 end
 
 local function save()
@@ -247,14 +281,27 @@ local function run( event )
 	local p = PARAMS[ st.sel ]
 	if st.editing then
 		if dir ~= 0 then change( p, dir ) end
-		if ENTER or EXIT then st.editing = false end
+		if p.kind == 'src' then pickMoved( p ) end
+		if ENTER or EXIT then
+			st.editing = false
+			st.msg = nil
+		end
 	elseif dir ~= 0 then
 		st.sel = math.max( 1, math.min( #PARAMS + 1, st.sel + dir ) )
 	elseif ENTER then
+		st.msg = nil
 		if not p then
 			if st.dirty then save() end
 		elseif st.values[ p.name ] ~= nil then
-			if p.kind == 'bool' then change( p, 1 ) else st.editing = true end
+			if p.kind == 'bool' then
+				change( p, 1 )
+			else
+				st.editing = true
+				if p.kind == 'src' then
+					snapshot( p )
+					st.msg = 'Move control/scroll'
+				end
+			end
 		end
 	elseif EXIT then
 		if st.dirty and not st.warned then
