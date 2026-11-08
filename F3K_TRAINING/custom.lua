@@ -15,7 +15,7 @@
 local PRELAUNCH_SWITCH = 'se' 		-- temporary switch on the left
 --local PRELAUNCH_SWITCH = 'sh'		-- temporary switch on the right (or emulator)
 local MENU_SWITCH = 'sc'		-- a 3-pos switch is mandatory here : up=menu; mid=stop; down=run
-local MENU_SCROLL_ENCODER = 's1'
+local MENU_SCROLL_ENCODER = 'thr'
 local RADIO_VOLTAGE = { 'Batt' }
 local MODEL_VOLTAGE = { 'RxBt', 'Rbt' }
 local HEIGHT = { 'Alt', 'GAlt', 'Valt' }	-- first existing sensor is used (vario / baro 'Alt' first)

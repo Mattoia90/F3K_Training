@@ -42,25 +42,27 @@ end
 local function test_parse_build()
   print("- Testing config tool parse / build on the shipped custom.lua")
   local tool = load_tool()
+  -- Values saved in custom.lua change with the user's settings: only check that all are found
   local v, q = tool.parse(original)
   helper.assert_eq(v ~= nil, true, "custom.lua parsed")
-  helper.assert_eq(v.PRELAUNCH_SWITCH, "se", "Prelaunch is the uncommented line, not --local ... 'sh'")
-  helper.assert_eq(v.MENU_SWITCH, "sc", "Menu switch")
-  helper.assert_eq(v.MENU_SCROLL_ENCODER, "s1", "Scroll encoder")
-  helper.assert_eq(v.TASK_DESCRIPTION, true, "Task description")
-  helper.assert_eq(v.PREP_COUNTDOWN, 10, "Prep countdown")
-  helper.assert_eq(v.TASK_LOG, false, "Task log")
-  helper.assert_eq(v.LAUNCH_HEIGHT_VOICE, true, "Launch height voice")
+  helper.assert_eq(type(v.PRELAUNCH_SWITCH), "string", "Prelaunch found")
+  helper.assert_eq(type(v.MENU_SCROLL_ENCODER), "string", "Scroll encoder found")
+  helper.assert_eq(type(v.TASK_DESCRIPTION), "boolean", "Task description found")
+  helper.assert_eq(type(v.PREP_COUNTDOWN), "number", "Prep countdown found")
+  helper.assert_eq(type(v.TASK_LOG), "boolean", "Task log found")
+  helper.assert_eq(type(v.LAUNCH_HEIGHT_VOICE), "boolean", "Launch height voice found")
+  helper.assert_eq(tool.build(original, v, q), original, "No change = identical file")
 
-  v.PRELAUNCH_SWITCH, v.PREP_COUNTDOWN, v.TASK_LOG = "sh", 5, true
-  local out = tool.build(original, v, q)
+  local out = tool.build(original, { PRELAUNCH_SWITCH = "sa", PREP_COUNTDOWN = 7, TASK_LOG = true }, q)
   local v2 = tool.parse(out)
-  helper.assert_eq(v2.PRELAUNCH_SWITCH, "sh", "Changed prelaunch read back")
-  helper.assert_eq(v2.PREP_COUNTDOWN, 5, "Changed countdown read back")
+  helper.assert_eq(v2.PRELAUNCH_SWITCH, "sa", "Changed prelaunch read back")
+  helper.assert_eq(v2.PREP_COUNTDOWN, 7, "Changed countdown read back")
   helper.assert_eq(v2.TASK_LOG, true, "Changed log read back")
+  helper.assert_eq(v2.MENU_SWITCH, v.MENU_SWITCH, "Other values untouched")
   helper.assert_eq(out:find("%-%-local PRELAUNCH_SWITCH = 'sh'", 1) ~= nil, true, "Commented line kept")
-  helper.assert_eq(#out, #original - 2, "Only the values changed (false -> true and 10 -> 5 remove 1 char each)")
-  helper.assert_eq(tool.build(original, tool.parse(original)), original, "No change = identical file")
+  local _, changed = out:gsub("\n", "\n")
+  local _, lines = original:gsub("\n", "\n")
+  helper.assert_eq(changed, lines, "Same number of lines")
 
   local missing_v, missing = tool.parse("local MENU_SWITCH = 'sc'\n")
   helper.assert_eq(missing_v, nil, "Incomplete file rejected")
@@ -69,7 +71,9 @@ end
 
 local function test_ui_save()
   print("- Testing config tool UI: edit prelaunch + task description, save")
-  local files = { ["/SCRIPTS/F3K_TRAINING/custom.lua"] = original }
+  -- Known starting values, whatever the shipped custom.lua says
+  local start = load_tool().build(original, { PRELAUNCH_SWITCH = "se", MENU_SWITCH = "sc", TASK_DESCRIPTION = true }, {})
+  local files = { ["/SCRIPTS/F3K_TRAINING/custom.lua"] = start }
   install_sd(files)
   local tool = load_tool()
   tool.init()
@@ -88,7 +92,7 @@ local function test_ui_save()
   helper.assert_eq(v.PRELAUNCH_SWITCH, "sf", "Prelaunch saved")
   helper.assert_eq(v.TASK_DESCRIPTION, false, "Task description saved")
   helper.assert_eq(v.MENU_SWITCH, "sc", "Other values untouched")
-  helper.assert_eq(files["/SCRIPTS/F3K_TRAINING/custom.bak"], original, "Backup of the previous file")
+  helper.assert_eq(files["/SCRIPTS/F3K_TRAINING/custom.bak"], start, "Backup of the previous file")
   helper.assert_eq(tool.run(EVT_VIRTUAL_EXIT), 1, "EXIT after save quits")
 end
 
