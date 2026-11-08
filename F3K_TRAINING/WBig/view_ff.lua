@@ -10,6 +10,7 @@
 
 
 local task = dofile( F3K_SCRIPT_PATH .. 'task_ff.lua' )
+local widget = dofile( F3K_SCRIPT_PATH .. 'WBig/viewbase.lua' )
 
 
 function task.display( context )
@@ -37,6 +38,7 @@ function task.display( context )
 	OpenTX.lcd.drawText( 10, 133, task.name, 0 )
 	
 	task.timer1.draw( 55, 13, XXLSIZE )
+	widget.drawLaunchHeight( task )
 	task.timer2.draw( 120, 133, 0 )
 	OpenTX.lcd.drawTimer( 190, 133, getValue( 'clock' ), 0 )
 

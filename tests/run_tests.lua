@@ -25,6 +25,8 @@ dofile("tests/test_task_qt.lua")
 dofile("tests/test_task_e.lua")
 dofile("tests/test_prep_countdown.lua")
 dofile("tests/test_tasklog.lua")
+dofile("tests/test_launch_height.lua")
+dofile("tests/test_config_tool.lua")
 
 print("=======================================")
 print(string.format("Test Results: %d passed, %d failed", helper.passed, helper.failed))

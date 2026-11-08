@@ -208,4 +208,29 @@ if not ok then
 end
 
 
+-- Value of the first existing source of a list (e.g. { 'Alt', 'GAlt' }), nil if none exists
+local sourceIdCache = {}
+function openTX.getFirstValue( sourceList )
+	for _, name in ipairs( sourceList or {} ) do
+		local sourceId = sourceIdCache[ name ]
+		if sourceId == nil then
+			sourceId = getSourceIndex and getSourceIndex( name ) or false
+			sourceIdCache[ name ] = sourceId
+		end
+
+		local value
+		if sourceId and getSourceValue then
+			value = getSourceValue( sourceId )
+		elseif not sourceId then
+			value = getValue( name )	-- nil when the source doesn't exist
+		end
+
+		if value ~= nil then
+			return value
+		end
+	end
+	return nil
+end
+
+
 return openTX

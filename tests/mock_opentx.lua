@@ -39,11 +39,13 @@ function getSourceIndex(name)
   return name
 end
 
+local mocked_altitude = nil -- 'Alt' sensor value, nil = no altitude sensor
+
 function getSourceValue(id)
   if id == 'Batt' then return 8.2 end
   if id == 'RxBt' or id == 'Rbt' then return 5.0 end
-  if id == 'GAlt' or id == 'Valt' then return 120 end
-  return 0
+  if id == 'Alt' then return mocked_altitude end
+  return nil
 end
 
 function getTime()
@@ -144,6 +146,9 @@ mock_env = {
   end,
   setSwitch = function(name, value)
     mocked_switches[name] = value
+  end,
+  setAltitude = function(value)
+    mocked_altitude = value
   end,
   getPlayedSounds = function()
     return played_sounds

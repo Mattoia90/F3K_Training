@@ -12,6 +12,8 @@ function createTimeKeeper( size, limit )
 	local tab = {}
 	local LIMIT = limit
 	local flights = {}	-- every recorded flight, in the order flown (for the task log)
+	local heights = {}	-- launch height (m) of every launch, in the order flown (only with an altitude sensor)
+	local h0, hMax, hEnd	-- launch being measured: ground altitude, peak, end of the measurement (10 ms ticks)
 
 
 	local function initialize( size )
@@ -19,6 +21,34 @@ function createTimeKeeper( size, limit )
 			tab[ i ] = 0
 		end
 		flights = {}
+		heights = {}
+		hEnd = nil
+	end
+
+
+	-- Launch height = peak altitude - altitude at the launch, measured until the peak is passed
+	-- (3 m below it), 10 s after the launch or the end of the flight, whichever comes first.
+	-- start: the plane has just been launched ; stop: the flight has just ended
+	local function trackHeight( start, stop )
+		local alt = OpenTX.getFirstValue( F3KConfig.HEIGHT )
+		if alt == nil then
+			return	-- no altitude sensor
+		end
+		if start then
+			h0, hMax, hEnd = alt, alt, getTime() + 1000
+		end
+		if not hEnd then
+			return
+		end
+		hMax = math.max( hMax, alt )
+		if stop or getTime() > hEnd or alt < hMax - 3 then
+			local h = math.floor( hMax - h0 + 0.5 )
+			heights[ #heights + 1 ] = h
+			hEnd = nil
+			if h > 0 and F3KConfig.LAUNCH_HEIGHT_VOICE then	-- 0 = no telemetry
+				playNumber( h, UNIT_METERS or 0, 0 )
+			end
+		end
 	end
 
 
@@ -90,7 +120,10 @@ function createTimeKeeper( size, limit )
 		getTotal=getTotal,
 		reset=reset,
 		draw=draw,
-		getFlights=function() return flights end
+		getFlights=function() return flights end,
+		trackHeight=trackHeight,
+		getHeights=function() return heights end,
+		getLastHeight=function() return heights[ #heights ] end
 	}
 end
 

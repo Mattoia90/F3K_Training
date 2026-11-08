@@ -10,10 +10,12 @@
 
 
 local task = dofile( F3K_SCRIPT_PATH .. 'task_ff.lua' )
+local display = dofile( F3K_SCRIPT_PATH .. 'X9/viewbase.lua' )
 
 
 function task.display()
 	task.timer1.draw( 24, 4, XXLSIZE )
+	display.drawLaunchHeight( task )
 	task.timer2.draw( 80, 53, 0 )
 	lcd.drawTimer( 120, 53, getValue( 'clock' ), 0 )
 

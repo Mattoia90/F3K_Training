@@ -132,6 +132,11 @@ function taskFF.background()
 	local states = { taskFF.resetState, taskFF.startedState, taskFF.flyingState, taskFF.landedState, taskFF.endState }
 	states[ prev ]()
 
+	local st = taskFF.state
+	if prev == 3 or st == 3 then
+		taskFF.times.trackHeight( prev ~= 3, st ~= 3 )	-- launch height
+	end
+
 	-- Task log: free flight never ends by itself, so it's written when the user stops it
 	if F3KConfig.TASK_LOG and (prev == 3 or prev == 4) and taskFF.state == 1 then
 		dofile( F3K_SCRIPT_PATH .. 'tasklog.lua' )( taskFF, 'STOP' )

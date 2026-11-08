@@ -8,6 +8,14 @@
 local widget = {}
 
 
+function widget.drawLaunchHeight( task )
+	local h = task.times.getLastHeight()
+	if h then
+		OpenTX.lcd.drawText( 10, 92, 'Launch ' .. h .. ' m', SMLSIZE )
+	end
+end
+
+
 function widget.drawCommon( context, task )
 	local w = context.zone.w
 	local h = context.zone.h
@@ -15,6 +23,7 @@ function widget.drawCommon( context, task )
 	local verticaldividerx = 280
 
 	task.timer1.draw( 55, 13, XXLSIZE )
+	widget.drawLaunchHeight( task )
 
 	OpenTX.lcd.setColor( CUSTOM_COLOR, context.options.BackgroundColor )
 	-- background rect right side

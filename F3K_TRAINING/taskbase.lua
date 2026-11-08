@@ -260,8 +260,12 @@ function taskBase.background()
 	local states = { taskBase.resetState, taskBase.startedState, taskBase.flyingState, taskBase.landedState, taskBase.endState }
 	states[ prev ]()
 
-	-- Task log: written once, when the task ends (5) or is stopped by the user (1)
 	local st = taskBase.state
+	if prev == 3 or st == 3 then
+		taskBase.times.trackHeight( prev ~= 3, st ~= 3 )	-- launch height
+	end
+
+	-- Task log: written once, when the task ends (5) or is stopped by the user (1)
 	if F3KConfig.TASK_LOG and (prev == 3 or prev == 4) and (st == 5 or st == 1) then
 		dofile( F3K_SCRIPT_PATH .. 'tasklog.lua' )( taskBase, st == 5 and 'END' or 'STOP' )
 	end

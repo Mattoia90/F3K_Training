@@ -15,10 +15,10 @@
 local PRELAUNCH_SWITCH = 'se' 		-- temporary switch on the left
 --local PRELAUNCH_SWITCH = 'sh'		-- temporary switch on the right (or emulator)
 local MENU_SWITCH = 'sc'		-- a 3-pos switch is mandatory here : up=menu; mid=stop; down=run
-local MENU_SCROLL_ENCODER = 'thr'
+local MENU_SCROLL_ENCODER = 's1'
 local RADIO_VOLTAGE = { 'Batt' }
 local MODEL_VOLTAGE = { 'RxBt', 'Rbt' }
-local HEIGHT = { 'GAlt', 'Valt' }
+local HEIGHT = { 'Alt', 'GAlt', 'Valt' }	-- first existing sensor is used (vario / baro 'Alt' first)
 
 local SOUND_PATH = F3K_SCRIPT_PATH .. 'sounds/'
 
@@ -39,6 +39,11 @@ local PREP_COUNTDOWN = 10
 --   false : no log
 -- NB: the TasksLog folder must exist on the SD card (Lua scripts can't create folders)
 local TASK_LOG = false
+
+-- Launch height voice (needs an altitude sensor, see HEIGHT)
+--   true  : the height of every launch is announced in meters
+--   false : not announced (still shown on screen and written in the task log)
+local LAUNCH_HEIGHT_VOICE = true
 
 
 
@@ -131,6 +136,7 @@ return {
 	TASK_DESCRIPTION = TASK_DESCRIPTION,
 	PREP_COUNTDOWN = PREP_COUNTDOWN,
 	TASK_LOG = TASK_LOG,
+	LAUNCH_HEIGHT_VOICE = LAUNCH_HEIGHT_VOICE,
 
 	resetLaunchDetection = resetLaunchDetection,
 	forceLaunch = forceLaunch,

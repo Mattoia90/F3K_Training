@@ -1,8 +1,17 @@
 local display = {}
 
 
+function display.drawLaunchHeight( task )
+	local h = task.times.getLastHeight()
+	if h then
+		lcd.drawText( 130, 2, 'L:' .. h .. 'm', SMLSIZE )
+	end
+end
+
+
 function display.drawCommon( task )
 	task.timer1.draw( 24, 4, XXLSIZE )
+	display.drawLaunchHeight( task )
 
 	lcd.drawLine( 0, 47, 159, 47, SOLID, 2 )
 	lcd.drawText( 2, 53, task.name, 0 )

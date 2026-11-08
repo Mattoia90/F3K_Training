@@ -73,14 +73,30 @@ With the login you can save your configurations and reuse them later.
 1. Open https://rcglideranalytics.com/F3kTraining/Configurator in a browser (Chrome or Edge recommended: they can save the file in place; other browsers download the updated file).
 2. Click "Open custom.lua…" (or drop the file on the page) and select `F3K_TRAINING/custom.lua`, either from this folder or directly from the radio SD card ('SDVolume':\SCRIPTS\F3K_TRAINING\custom.lua).
 3. Choose your radio model (FrSky Taranis X9D Plus 2019, Q X7, X-Lite Pro, RadioMaster Zorro, TX16S) to see where the switches are, then click a control on the drawing to assign it, or use "Apply example settings".
-4. Set PRELAUNCH_SWITCH, MENU_SWITCH, MENU_SCROLL_ENCODER, TASK_DESCRIPTION, PREP_COUNTDOWN (0..10) and TASK_LOG. Switches, buttons, pots, sliders and sticks not shown on the drawing can be selected from the lists or typed with "Other…".
+4. Set PRELAUNCH_SWITCH, MENU_SWITCH, MENU_SCROLL_ENCODER, TASK_DESCRIPTION, PREP_COUNTDOWN (0..10), TASK_LOG and LAUNCH_HEIGHT_VOICE. Switches, buttons, pots, sliders and sticks not shown on the drawing can be selected from the lists or typed with "Other…".
 5. Click "Save" (or "Download custom.lua") and copy the file to 'SDVolume':\SCRIPTS\F3K_TRAINING\ if you did not save it there directly.
 
-Only those six values are changed; the rest of custom.lua is kept as it is. The radio drawings follow the manufacturers' manuals: check the switches in the radio's hardware / switch test screen if your radio was modified.
+Only those seven values are changed; the rest of custom.lua is kept as it is. The radio drawings follow the manufacturers' manuals: check the switches in the radio's hardware / switch test screen if your radio was modified.
+
+## CONFIGURE ON THE RADIO (F3K Config tool)
+At the field you can change the same seven values directly on the radio, without a computer.
+1. The tool is f3kcfg.lua inside the F3K_TRAINING folder, so it is already on the SD card ('SDVolume':\SCRIPTS\F3K_TRAINING\f3kcfg.lua).
+2. Open the radio SD card browser, go to SCRIPTS/F3K_TRAINING, long press f3kcfg.lua > Execute. Optional: also copy it to 'SDVolume':\SCRIPTS\TOOLS to start "F3K Config" from the radio Tools menu.
+3. Scroll to a setting and press ENTER: ON/OFF settings toggle, the others enter edit mode (scroll to change, ENTER/EXIT to confirm). Only the switches / inputs existing on your radio are listed.
+4. Select SAVE and press ENTER, then EXIT. The settings are read again when the telemetry script restarts after the tool. If they are not applied, restart the radio.
+
+The tool edits SCRIPTS\F3K_TRAINING\custom.lua (or WIDGETS\F3K_TRAINING\custom.lua on Horus) in the same way as the Configurator, and keeps the previous file as custom.bak. On Horus widgets the switches set in the widget settings take precedence over custom.lua.
 
 ## HOW TO SET F3K TRAINING
 Select in the radio the F3K model, go to model setting on section "DISPLAY", in a one empty screen select "script" and then select "f3k.lua".
 Now you can go in the corresponding page of the telemetry, select your task, toggle the sc switch and play with f3k training!!
+
+### Next version (unreleased)
+1. Launch height: with an altitude sensor (`Alt` from a vario / ELRS baro, `GAlt` or `Valt`; see HEIGHT in custom.lua) the height of every launch is measured (peak altitude minus the altitude at the launch, until the peak is passed, 10 s or the landing), announced in meters and shown on screen (X7: `L:` when not flying, live `A:` while flying; X9: `L:` top right; Horus: below the main timer).
+2. New LAUNCH_HEIGHT_VOICE option in custom.lua (default true): set it to false to keep the launch height on screen and in the log without the voice announcement.
+3. Task log: new Heights column before the flights (`Date;Time;Task;Window;Status;Heights;Flights`), launch heights in meters separated by spaces, empty without altitude sensor.
+4. custom.lua changed (HEIGHT now starts with `Alt`, new LAUNCH_HEIGHT_VOICE): when upgrading, set it again starting from the new file.
+5. New F3K Config radio tool (F3K_TRAINING/f3kcfg.lua, run it from the SD card browser): change the custom.lua settings on the radio at the field.
 
 ### Version 3.04.05
 1. New Task E Poker (10 min working time) and EE Poker (15 min working time), at the end of the task list: the target is chosen with the menu scroll input, see "TASK E - POKER".
