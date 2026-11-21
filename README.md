@@ -29,6 +29,10 @@ With TASK_DESCRIPTION = false and PREP_COUNTDOWN = 0 there is no prep time and n
 
 Task C (AULD) and Free Flight have no prep time and are not affected.
 
+## HOW TO SET F3K TRAINING
+Select in the radio the F3K model, go to model setting on section "DISPLAY", in a one empty screen select "script" and then select "f3k.lua".
+Now you can go in the corresponding page of the telemetry, select your task, toggle the sc switch and play with f3k training!!
+
 ## TASK E - POKER (E = 10 min, EE = 15 min)
 Up to 3 target times, each announced before the launch. You can launch as many times as you need to reach or exceed the announced target, and it can't be changed until it has been reached. The last call can be "end of working time" (W), which gets one attempt only. The score is the sum of the reached targets.
 
@@ -104,9 +108,6 @@ At the field you can change the same seven values directly on the radio, without
 
 The tool edits SCRIPTS\F3K_TRAINING\custom.lua (or WIDGETS\F3K_TRAINING\custom.lua on Horus) in the same way as the Configurator, and keeps the previous file as custom.bak. On Horus widgets the switches set in the widget settings take precedence over custom.lua.
 
-## HOW TO SET F3K TRAINING
-Select in the radio the F3K model, go to model setting on section "DISPLAY", in a one empty screen select "script" and then select "f3k.lua".
-Now you can go in the corresponding page of the telemetry, select your task, toggle the sc switch and play with f3k training!!
 
 ### Version 3.04.07
 1. New Training Path (menu entry TP, file trainingpath.lua): 2 to 10 tasks flown like a competition, with prep time, test flight and no fly time before every task. Paths are built on https://rcglideranalytics.com/F3kTraining/TrainingPath and copied to the new TR_PATHS folder, see "TRAINING PATH (TP)".
