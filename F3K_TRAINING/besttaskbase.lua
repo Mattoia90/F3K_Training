@@ -32,7 +32,7 @@ function taskBase.landedState()
 		if F3KConfig.launched() then
 			if remaining < taskBase.MAX_FLIGHT_TIME then
 				taskBase.timer2.start( remaining )
-				taskBase.playSound( 'remaining' )
+				if remaining < 60 then taskBase.playSound( 'remaining' ) end	-- from 60 s playRemainingTime() says it
 				taskBase.playRemainingTime( remaining )
 			else
 				taskBase.timer2.start()

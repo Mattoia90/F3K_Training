@@ -24,9 +24,9 @@ function helper.select_and_load_task(idx)
   mock_env.clearTimerEvents()
   mock_env.setSwitch("sc", -1024) -- menu mode
   
-  -- Midpoint stick calculation for 20 menu items
+  -- Midpoint stick calculation for 21 menu items
   local target_selection = idx - 1
-  local num_tasks = 20
+  local num_tasks = 21
   local thr_val = math.floor(1024 - (target_selection + 0.5) * (2049 / num_tasks))
   mock_env.setSwitch("thr", thr_val)
   

@@ -106,7 +106,7 @@ function taskQT.landedState()
 			local remaining = taskQT.timer1.getVal()
 			if remaining < taskQT.MAX_FLIGHT_TIME then
 				taskQT.timer2.start( remaining )
-				taskQT.playSound( 'remaining' )
+				if remaining < 60 then taskQT.playSound( 'remaining' ) end	-- from 60 s playRemainingTime() says it
 				taskQT.playRemainingTime( remaining )
 			else
 				taskQT.timer2.start()

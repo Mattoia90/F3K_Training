@@ -52,7 +52,7 @@ local function test_log_end_of_task()
   helper.assert_eq(log.opens[2] and log.opens[2].mode, "a", "File opened in append mode")
   helper.assert_eq(log.text,
     "Date;Time;Task;Window;Status;Heights;Flights\n" ..
-    "2026-11-04;15:32:10;Last Flight;600;END;;" .. table.concat(flights, ";") .. "\n",
+    "2026-11-04;15:32:10;Last Flight;600;END;;;" .. table.concat(flights, ";") .. "\n",
     "Header + task line written")
 
   -- Going back to stop from the end state must not log the task again
@@ -136,7 +136,7 @@ local function test_log_poker()
   helper.simulate_flight(script, 15)	-- 3rd target ends the task
   restore_io()
   -- the mock countdown stops at 0, so flights past the target are logged as the target
-  helper.assert_eq(log.text:match(";Poker;600;END;;5;10;10;10\n$") ~= nil, true, "Poker logged as END with every flight")
+  helper.assert_eq(log.text:match(";Poker;600;END;;;5;10;10;10\n$") ~= nil, true, "Poker logged as END with every flight")
 
   script = helper.select_and_load_task(18)
   F3KConfig.TASK_LOG = true

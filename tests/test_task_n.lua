@@ -13,15 +13,14 @@ local function test_task_n_best_flight()
   helper.assert_timer_started(1, 598, "Flight 1 timer starts with 598s target")
   helper.assert_timer_stopped(1, "Flight 1 timer stops on landing")
 
-  -- FIXME: remaining.wav is played double times
-  -- Assert that remaining.wav is played exactly twice (known bug in script)
+  -- remaining.wav once: playRemainingTime() announces it, callers must not play it again
   local remaining_count = 0
   for _, s in ipairs(mock_env.getPlayedSounds()) do
     if s.type == "file" and s.value:match("remaining%.wav") then
       remaining_count = remaining_count + 1
     end
   end
-  helper.assert_eq(remaining_count, 2, "Double remaining.wav play occurred (known bug in script)")
+  helper.assert_eq(remaining_count, 1, "remaining.wav played once")
 
   -- Only best flight is kept: 596
   helper.assert_eq(mock_env.taskState.times.getTotal(), 596, "Only best flight kept")

@@ -84,7 +84,11 @@ function taskBase.initPrepTimer()
 	-- so that it doesn't get queued behind the task description
 	local prepTime
 	taskBase.launchStart = false
-	if F3KConfig.TASK_DESCRIPTION then
+	if F3KPath then
+		-- Training Path: prep time / test flight / no fly are run by trainingpath.lua, the window starts right away
+		taskBase.countdownStart = 0
+		prepTime = 0
+	elseif F3KConfig.TASK_DESCRIPTION then
 		taskBase.countdownStart = taskBase.COUNTDOWN_START
 		prepTime = taskBase.PREP_TIME
 	else
@@ -171,7 +175,7 @@ end
 function taskBase.resetState()
 	-- Wait for the start of the task
 	if getValue( Options.MenuSwitch ) > 0 then
-		if F3KConfig.TASK_DESCRIPTION then
+		if F3KConfig.TASK_DESCRIPTION and not F3KPath then	-- trainingpath.lua announces it at the prep time
 			taskBase.playSound( taskBase.wav )
 		end
 
@@ -268,6 +272,9 @@ function taskBase.background()
 	-- Task log: written once, when the task ends (5) or is stopped by the user (1)
 	if F3KConfig.TASK_LOG and (prev == 3 or prev == 4) and (st == 5 or st == 1) then
 		dofile( F3K_SCRIPT_PATH .. 'tasklog.lua' )( taskBase, st == 5 and 'END' or 'STOP' )
+	end
+	if F3KPath and st == 5 then
+		F3KPath.done = true	-- trainingpath.lua moves to the next task
 	end
 	return taskBase.running
 end

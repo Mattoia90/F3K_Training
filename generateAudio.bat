@@ -34,4 +34,9 @@ rem Poker target / end of working time: faster rate (-s 2), short silence at sta
 %AUDIO_GEN_TOOL% %OPTIONS% -t "task N, best flight, 9:59 max" -w %AUDIO_OUTPUT_DIR%/taskn.wav
 %AUDIO_GEN_TOOL% %OPTIONS% -t "quick turnaround practice, 45 seconds flights" -w %AUDIO_OUTPUT_DIR%/taskqt.wav
 %AUDIO_GEN_TOOL% %OPTIONS% -t "well done" -w %AUDIO_OUTPUT_DIR%/welldone.wav
+rem Training Path (trainingpath.lua)
+%AUDIO_GEN_TOOL% %OPTIONS% -t "preparation time" -w %AUDIO_OUTPUT_DIR%/prep.wav
+%AUDIO_GEN_TOOL% %OPTIONS% -t "test flight" -w %AUDIO_OUTPUT_DIR%/testfl.wav
+%AUDIO_GEN_TOOL% %OPTIONS% -t "no fly time" -w %AUDIO_OUTPUT_DIR%/nofly.wav
+%AUDIO_GEN_TOOL% %OPTIONS% -t "training path complete, well done" -w %AUDIO_OUTPUT_DIR%/pathend.wav
 

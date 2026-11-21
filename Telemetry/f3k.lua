@@ -1,4 +1,4 @@
-F3KVersion = '3.04.06'
+F3KVersion = '3.04.07'
 --[[
 	F3K Training - 	Mike, ON4MJ
 
@@ -139,7 +139,8 @@ createMenu = function()
 		{ id='E', desc='Poker (10 min)', win=10 },
 		{ id='EE', desc='Poker (15 min)', win=15 },
 		{ id='QT', desc=LCD_W > 128 and 'QT practice (13 x 45s)' or 'QT practice' },
-		{ id='FF', desc=LCD_W > 128 and 'Free flight (simple timer)' or 'Free flight' }
+		{ id='FF', desc=LCD_W > 128 and 'Free flight (simple timer)' or 'Free flight' },
+		{ id='TP', desc='Training Path' }
 	}
 
 	local function dummy()

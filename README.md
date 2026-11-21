@@ -1,7 +1,7 @@
 # F3K TRAINING
 
 Actual version: 
-#### 3.04.06
+#### 3.04.07
 
 Original project on: https://www.rcgroups.com/forums/showthread.php?2298914-F3K-training-script-for-the-Taranis-Q-and-Horus/page22
 
@@ -45,15 +45,31 @@ The task ends after 3 reached targets or at the end of the working time.
 
 The task log records the flight times of Poker, not the announced targets; the TaskLog page doesn't score Poker yet.
 
+## TRAINING PATH (TP)
+A training path is a sequence of 2 to 10 tasks flown like a competition: for every task the radio runs the **prep time**, a **test flight** and the **no fly** time, then the task working time, and goes on to the next task.
+
+1. Build the path on https://rcglideranalytics.com/F3kTraining/TrainingPath: start from one of the 5 default levels or choose the tasks yourself ("Random tasks" fills the positions; with more than 3 tasks the same task appears at most twice), set the prep / test flight / no fly seconds (default 180 / 45 / 60) and press "Download". With the login you can save your paths.
+2. Copy the file to the TR_PATHS folder: 'SDVolume':\SCRIPTS\F3K_TRAINING\TR_PATHS\ (Taranis, X7, X-Lite, Zorro) or 'SDVolume':\WIDGETS\F3K_TRAINING\TR_PATHS\ (color radios). The folder is included in F3K_TRAINING with an example, Level_1.lua.
+3. On the radio, with the menu switch up scroll to **TP Training Path** and move the menu switch down.
+4. Scroll with the throttle to choose the file (its times and tasks are shown) and pull the prelaunch switch to start.
+5. Menu switch to the middle stops the path (the current task is logged as STOP); up goes back to the task menu.
+
+**OpenTX:** the radio can't list a folder, so the file must be named `Level_1`..`Level_5` or `Path_1`..`Path_9` (`.lua`). EdgeTX reads any name.
+
+With TASK_LOG = true every task of the path is logged with the Path column (path name, path start time, task number), so the same path flown several times a day stays separate. The TaskLog page and "My Training" show a **Training paths** table with the score of every run out of 1000 and in percent: the average of the task scores, a task not flown counts 0.
+
 ## TASK HISTORY LOG
 In the same Custom.lua file, set local TASK_LOG = true to keep a history of the tasks flown.
 At the end of each task (or when it is stopped with the switch after at least one flight) a line is appended to 'SDVolume':\SCRIPTS\F3K_TRAINING\TasksLog\yyyyMMdd.csv (one file per day):
 ```
-Date;Time;Task;Window;Status;Flights
-2026-11-04;15:32:10;Last Flight;600;END;95;72;110
+Date;Time;Task;Window;Status;Heights;Path;Flights
+2026-11-04;15:32:10;Last Flight;600;END;;;95;72;110
+2026-11-04;16:10:05;Last Flight;600;END;42 45;Level_1|20261104160000|1/2;300
 ```
 - Window: working time in seconds (0 when the task has none).
 - Status: END (task completed) or STOP (stopped with the switch).
+- Heights: launch heights in meters separated by spaces, empty without altitude sensor.
+- Path: Training Path run as name|start time|task/total tasks, empty outside a training path.
 - Flights: every flight time in seconds, in the order flown.
 
 To analyse the logs open the TaskLog page https://rcglideranalytics.com/F3kTraining/TaskLog (or the "TaskLog" link at the top of the configuration page) and load one or more CSV files: it shows the flights of each session against their targets, the END / STOP status and a score normalized to 1000 (1000 = every target fully reached; Free Flight has no target).
@@ -65,6 +81,7 @@ Instead of editing Custom.lua by hand you can use the online configuration page 
 The configuration and task log pages are now hosted on:
 - Configurator: https://rcglideranalytics.com/F3kTraining/Configurator
 - TaskLog: https://rcglideranalytics.com/F3kTraining/TaskLog
+- Training Path: https://rcglideranalytics.com/F3kTraining/TrainingPath
 
 With the login you can save your configurations and reuse them later.
 
@@ -90,6 +107,14 @@ The tool edits SCRIPTS\F3K_TRAINING\custom.lua (or WIDGETS\F3K_TRAINING\custom.l
 ## HOW TO SET F3K TRAINING
 Select in the radio the F3K model, go to model setting on section "DISPLAY", in a one empty screen select "script" and then select "f3k.lua".
 Now you can go in the corresponding page of the telemetry, select your task, toggle the sc switch and play with f3k training!!
+
+### Version 3.04.07
+1. New Training Path (menu entry TP, file trainingpath.lua): 2 to 10 tasks flown like a competition, with prep time, test flight and no fly time before every task. Paths are built on https://rcglideranalytics.com/F3kTraining/TrainingPath and copied to the new TR_PATHS folder, see "TRAINING PATH (TP)".
+2. Task log: new Path column after Heights (`Date;Time;Task;Window;Status;Heights;Path;Flights`), empty outside a training path. The TaskLog page shows the score of every path run out of 1000 and in percent.
+3. New voice files prep, testfl, nofly and pathend (sounds and sndhd).
+4. OpenTX: path files are found by fixed names (Level_1..5, Path_1..9) because OpenTX can't list a folder.
+5. Fixed "time remaining" announced twice in the last / best tasks, 3 out of 6 and QT practice.
+6. Unit tests: training path run and task log Path column.
 
 ### Version 3.04.06
 1. Launch height: with an altitude sensor (`Alt` from a vario / ELRS baro, `GAlt` or `Valt`; see HEIGHT in custom.lua) the height of every launch is measured (peak altitude minus the altitude at the launch, until the peak is passed, 10 s or the landing), announced in meters and shown on screen (X7: `L:` when not flying, live `A:` while flying; X9: `L:` top right; Horus: below the main timer).

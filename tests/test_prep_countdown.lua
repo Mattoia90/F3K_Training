@@ -9,7 +9,7 @@ local function load_task(idx, description, countdown)
   mock_env.setSwitch("sc", -1024)
   mock_env.setSwitch("se", -1024)
 
-  local num_tasks = 20
+  local num_tasks = 21
   local thr_val = math.floor(1024 - ((idx - 1) + 0.5) * (2049 / num_tasks))
   mock_env.setSwitch("thr", thr_val)
 
