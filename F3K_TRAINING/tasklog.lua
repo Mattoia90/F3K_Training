@@ -29,7 +29,7 @@ return function( task, status )
 		return	-- TasksLog folder missing: fail silently
 	end
 	if header then
-		io.write( f, 'Date;Time;Task;Window;Status;Heights;Flights\n' )
+		io.write( f, 'Date;Time;Task;Window;Status;Heights;Path;Flights\n' )
 	end
 	-- NB: the 'table' library is not available on the radio, so no table.concat here
 	local heights = task.times.getHeights()

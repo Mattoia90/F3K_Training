@@ -51,7 +51,7 @@ local function test_log_end_of_task()
   helper.assert_eq(log.opens[2] and log.opens[2].path, "/SCRIPTS/F3K_TRAINING/TasksLog/20261104.csv", "One file per day")
   helper.assert_eq(log.opens[2] and log.opens[2].mode, "a", "File opened in append mode")
   helper.assert_eq(log.text,
-    "Date;Time;Task;Window;Status;Heights;Flights\n" ..
+    "Date;Time;Task;Window;Status;Heights;Path;Flights\n" ..
     "2026-11-04;15:32:10;Last Flight;600;END;;;" .. table.concat(flights, ";") .. "\n",
     "Header + task line written")
 
@@ -93,7 +93,7 @@ local function test_log_free_flight()
   script.run()
   restore_io()
 
-  helper.assert_eq(log.text:match(";Free Flight;0;STOP;;%d+\n$") ~= nil, true, "Free flight logged as STOP")
+  helper.assert_eq(log.text:match(";Free Flight;0;STOP;;;%d+\n$") ~= nil, true, "Free flight logged as STOP")
 end
 
 
@@ -148,7 +148,7 @@ local function test_log_poker()
   mock_env.setSwitch("sc", 0)
   script.run()
   restore_io()
-  helper.assert_eq(log.text:match(";Poker 15;900;STOP;;30\n$") ~= nil, true, "Poker 15 logged as STOP")
+  helper.assert_eq(log.text:match(";Poker 15;900;STOP;;;30\n$") ~= nil, true, "Poker 15 logged as STOP")
 end
 
 
@@ -178,7 +178,7 @@ local function test_log_launch_heights()
   script.run()
   restore_io()
   mock_env.setAltitude(nil)
-  helper.assert_eq(log.text:match(";STOP;0 40;5;5\n$") ~= nil, true, "Launch heights in their own column, before the flights")
+  helper.assert_eq(log.text:match(";STOP;0 40;;5;5\n$") ~= nil, true, "Launch heights in their own column, before the flights")
 end
 
 

@@ -81,7 +81,7 @@ local function test_launch_start()
   mock_env.clearTimerEvents()
   mock_env.setSwitch("sc", -1024)
   mock_env.setSwitch("se", -1024)
-  mock_env.setSwitch("thr", math.floor(1024 - 16.5 * (2049 / 20)))	-- menu index 17
+  mock_env.setSwitch("thr", math.floor(1024 - 16.5 * (2049 / 21)))	-- menu index 17
   local script = dofile("./Telemetry/f3k.lua")
   F3KConfig.TASK_DESCRIPTION = false
   F3KConfig.PREP_COUNTDOWN = 0
@@ -91,6 +91,9 @@ local function test_launch_start()
   script.run()
   helper.assert_eq(task().state, 2, "Waiting for the first launch")
 
+  -- menu position (-586) is inside the deadband of THR_QUARTER: leave it first
+  mock_env.setSwitch("thr", THR_BOTTOM)
+  run(script)
   mock_env.setSwitch("thr", THR_QUARTER)
   run(script, 5)
   helper.assert_eq(task().selected, 150, "25% of 600s while waiting")
@@ -108,6 +111,9 @@ end
 local function test_lock_and_three_targets()
   print("- Testing Task E: strict lock, 3 targets, total")
   local script = load_and_start(17)
+  -- menu position (-586) is inside the deadband of THR_QUARTER: leave it first
+  mock_env.setSwitch("thr", THR_BOTTOM)
+  run(script)
   mock_env.setSwitch("thr", THR_QUARTER)
   run(script)
   helper.assert_eq(task().selected, 150, "25% of 600s")
