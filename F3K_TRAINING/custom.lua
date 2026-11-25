@@ -68,7 +68,7 @@ local function launched()
 		return true
 	end
 	local ret = false
-	if getValue( Options.PrelaunchSwitch ) < 0 then
+	if getValue( Options.PrelaunchSwitch ) <= 0 then
 		-- if the tmp switch is held for more than 0.6s, it's a launch ;
 		-- otherwise it was just a trigger pull to indicate that the plane has landed
 		if lastTimeLanded > 0 then

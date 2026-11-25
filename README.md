@@ -16,6 +16,8 @@ This you can manage the prestet swicth to start / stop timer correctly.
 2. Open the Custom.lua file.
 3. search this line local PRELAUNCH_SWITCH = 'se' and change 'se' with your preset switch if it is not equal.
 
+`PRELAUNCH_SWITCH` supports both standard 2-position momentary switches (`-1024` rest / `+1024` pull) and 3-position Moment-0-Stable switches (`0` rest / `+1024` pull; the `-1024` stable position is ignored so it can be used for other functions such as flight modes).
+
 ## CUSTOMIZE TASK DESCRIPTION / PREP COUNTDOWN
 In the same Custom.lua file, the line local TASK_DESCRIPTION = true selects how a task starts:
 - true: the task description is played, then the prep time countdown announces only 10..1 (the description has time to finish).
